@@ -3,6 +3,11 @@ Shader "Vacs/Standard"
     Properties
     {
         _Color("Color", Color) = (1, 1, 1, 1)
+        _Smoothness("Smoothness", Range(0, 1)) = 0
+        _Metallic("Metallic", Range(0, 1)) = 0
+        _MainTex("Albedo Map", 2D) = "white"{}
+        _NormalMap("Normal Map", 2D) = "bump"{}
+        _OcclusionMap("Occlusion", 2D) = "white" {}
     }
     SubShader
     {
@@ -11,8 +16,8 @@ Shader "Vacs/Standard"
 
         CGPROGRAM
 
-        #pragma surface Surface Standard vertex:VertexModifier nolightmap addshadow
-        #pragma target 3.0
+        #pragma surface Surface Standard vertex:VertexModifier addshadow nolightmap nolppv
+        #pragma target 5.0
 
         struct AppData
         {
@@ -20,15 +25,22 @@ Shader "Vacs/Standard"
             float4 tangent : TANGENT;
             float3 normal : NORMAL;
             float4 texcoord : TEXCOORD0;
-            uint vid : SV_VertexID;
+            uint vertexID : SV_VertexID;
         };
 
         struct Input
         {
+            float2 uv_MainTex;
             half vface : VFACE;
         };
 
-        half3 _Color;
+        half4 _Color;
+        half _Smoothness;
+        half _Metallic;
+        sampler2D _MainTex;
+        sampler2D _NormalMap;
+        sampler2D _OcclusionMap;
+
 
 #ifdef UNITY_COMPILER_HLSL
         StructuredBuffer<float4> _PositionBuffer;
@@ -39,22 +51,26 @@ Shader "Vacs/Standard"
         void VertexModifier(inout AppData v)
         {
 #ifdef UNITY_COMPILER_HLSL
-            v.vertex.xyz = _PositionBuffer[v.vid].xyz;
-            v.normal.xyz = _NormalBuffer[v.vid].xyz;
-            v.tangent.xyz = _TangentBuffer[v.vid];
-#else
-            v.vertex.xyz = float3(
-                UVRandom(v.texcoord.x, v.texcoord.y),
-                UVRandom(v.texcoord.x+1, v.texcoord.y+1),
-                UVRandom(v.texcoord.x+2, v.texcoord.y+2)
-            );
+            v.vertex.xyz = _PositionBuffer[v.vertexID].xyz;
+            v.normal.xyz = _NormalBuffer  [v.vertexID].xyz;
+            v.tangent    = _TangentBuffer [v.vertexID];
 #endif
         }
 
         void Surface(Input input, inout SurfaceOutputStandard o)
         {
-            o.Albedo = _Color;
-            o.Normal = float3(0, 0, (input.vface < 0) ? -1 : 1);
+            half4 albedo = tex2D(_MainTex, input.uv_MainTex);
+            half4 normal = tex2D(_NormalMap, input.uv_MainTex);
+            half occlusion = tex2D(_OcclusionMap, input.uv_MainTex).g;
+
+            o.Albedo = albedo.rgb * _Color.rgb;
+            o.Alpha = albedo.a * _Color.a;
+
+            o.Smoothness = _Smoothness;
+            o.Metallic = _Metallic;
+
+            o.Normal = UnpackNormal(normal) * (input.vface < 0 ? -1 : 1);
+            o.Occlusion = occlusion;
         }
 
         ENDCG
