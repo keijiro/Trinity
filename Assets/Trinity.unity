@@ -692,8 +692,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _data: {fileID: 11400000, guid: 59e6825501361124fb40aa0eed98eda7, type: 2}
-  _jitter: 1
-  _digitize: 1
+  _voxelize: 0
+  _jitter: 0
+  _digitize: 0
+  _computeVoxelize: {fileID: 7200000, guid: e9b049e1839f0f54d9e541dd72c6a9af, type: 3}
   _computeJitter: {fileID: 7200000, guid: 8f3575c7de6a6944d817dfd5934cd32a, type: 3}
   _computeDigitize: {fileID: 7200000, guid: 9c5b04c05f90e5e42a687fbb6a2a8637, type: 3}
   _computeReconstruct: {fileID: 7200000, guid: 72f506609fb08bd45ba4775a11e3f6c5, type: 3}
