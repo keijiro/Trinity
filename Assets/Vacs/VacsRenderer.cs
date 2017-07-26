@@ -10,6 +10,7 @@ namespace Vacs
         #region Exposed attributes
 
         [SerializeField] VacsData _data;
+        [SerializeField, Range(0, 1)] float _dissolve;
         [SerializeField, Range(0, 1)] float _voxelize;
         [SerializeField, Range(0, 1)] float _jitter;
         [SerializeField, Range(0, 1)] float _digitize;
@@ -18,6 +19,7 @@ namespace Vacs
 
         #region Hidden attributes
 
+        [SerializeField, HideInInspector] ComputeShader _computeDissolve;
         [SerializeField, HideInInspector] ComputeShader _computeVoxelize;
         [SerializeField, HideInInspector] ComputeShader _computeJitter;
         [SerializeField, HideInInspector] ComputeShader _computeDigitize;
@@ -104,7 +106,8 @@ namespace Vacs
         {
             ApplyCompute(_computeVoxelize, 1, _voxelize, _positionSource, _positionBuffer1);
             ApplyCompute(_computeJitter, 1, _jitter, _positionBuffer1, _positionBuffer2);
-            ApplyCompute(_computeDigitize, 2, _digitize, _positionBuffer2, _positionBuffer1);
+            ApplyCompute(_computeDissolve, 1, _dissolve, _positionBuffer2, _positionBuffer1);
+            ApplyCompute(_computeDigitize, 2, _digitize, _positionBuffer1, _positionBuffer2);
 
             var compute = _computeReconstruct;
             var kernel = compute.FindKernel("Main");
@@ -148,7 +151,7 @@ namespace Vacs
             if (_propertyBlock == null)
                 _propertyBlock = new MaterialPropertyBlock();
 
-            _propertyBlock.SetBuffer("_PositionBuffer", _positionBuffer1);
+            _propertyBlock.SetBuffer("_PositionBuffer", _positionBuffer2);
             _propertyBlock.SetBuffer("_NormalBuffer", _normalBuffer);
             _propertyBlock.SetBuffer("_TangentBuffer", _tangentBuffer);
             _propertyBlock.SetFloat("_TriangleCount", _data.triangleCount);
