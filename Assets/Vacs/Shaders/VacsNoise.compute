@@ -1,0 +1,58 @@
+#pragma kernel Update
+
+#include "Common.hlsl"
+#include "SimplexNoise3D.hlsl"
+
+StructuredBuffer<float4> PositionSource;
+StructuredBuffer<float4> NormalSource;
+StructuredBuffer<float4> TangentSource;
+
+RWBuffer<float4> PositionOut;
+RWBuffer<float4> NormalOut;
+RWBuffer<float4> TangentOut;
+
+CBUFFER_START(Params)
+    uint TriangleCount;
+    float Time;
+CBUFFER_END
+
+[numthreads(256, 1, 1)]
+void Update(uint id : SV_DispatchThreadID)
+{
+    if (id >= TriangleCount) return;
+
+    // Vertex indices
+    uint i1 = id;
+    uint i2 = id + TriangleCount;
+    uint i3 = id + TriangleCount * 2;
+
+    // Vertex positions
+    float3 p1 = PositionSource[i1].xyz;
+    float3 p2 = PositionSource[i2].xyz;
+    float3 p3 = PositionSource[i3].xyz;
+
+    // Centroid
+    float3 c123 = (p1 + p2 + p3) / 3;
+
+    // Noise field
+    float3 p_n = c123 * 1.2 - float3(0, Time / 2, Time / 4);
+    float param = max(0, snoise(p_n).w * 12);
+
+    // Modified vertex positions
+    float3 p1m = p1 + (p1 - c123) * param; 
+    float3 p2m = p2 + (p2 - c123) * param; 
+    float3 p3m = p3 + (p3 - c123) * param; 
+
+    // Output
+    PositionOut[i1] = float4(p1m, 0);
+    PositionOut[i2] = float4(p2m, 0);
+    PositionOut[i3] = float4(p3m, 0);
+
+    NormalOut[i1] = NormalSource[i1];
+    NormalOut[i2] = NormalSource[i2];
+    NormalOut[i3] = NormalSource[i3];
+
+    TangentOut[i1] = TangentSource[i1];
+    TangentOut[i2] = TangentSource[i2];
+    TangentOut[i3] = TangentSource[i3];
+}
