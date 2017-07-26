@@ -10,12 +10,14 @@ namespace Vacs
         #region Exposed attributes
 
         [SerializeField] VacsData _data;
+        [SerializeField, Range(0, 1)] float _jitter;
+        [SerializeField, Range(0, 1)] float _digitize;
 
         #endregion
 
         #region Hidden attributes
 
-        [SerializeField, HideInInspector] ComputeShader _computeNoise;
+        [SerializeField, HideInInspector] ComputeShader _computeJitter;
         [SerializeField, HideInInspector] ComputeShader _computeDigitize;
         [SerializeField, HideInInspector] ComputeShader _computeReconstruct;
 
@@ -38,6 +40,17 @@ namespace Vacs
         #endregion
 
         #region Internal resource handling
+
+        float globalTime {
+            get { return Application.isPlaying ? Time.time : 10; }
+        }
+
+        int GetThreadGroupSizeX(ComputeShader compute, int kernel)
+        {
+            uint cx, cy, cz;
+            compute.GetKernelThreadGroupSizes(kernel, out cx, out cy, out cz);
+            return (int)cx;
+        }
 
         void SetupVertices()
         {
@@ -68,49 +81,43 @@ namespace Vacs
             _tangentSource = _tangentBuffer = null;
         }
 
-        void ApplyCompute(ComputeShader compute, ComputeBuffer positionSource,
-            ComputeBuffer positionOut, int trianglePerThread)
+        void ApplyCompute(
+            ComputeShader compute, int trianglePerThread, float amplitude,
+            ComputeBuffer positionSource, ComputeBuffer positionOut)
         {
             var kernel = compute.FindKernel("Main");
 
             compute.SetBuffer(kernel, "PositionSource", positionSource);
             compute.SetBuffer(kernel, "PositionOut", positionOut);
+
             compute.SetInt("TriangleCount", _data.triangleCount);
+            compute.SetFloat("Amplitude", amplitude);
+            compute.SetFloat("Time", globalTime);
 
-            if (Application.isPlaying)
-                compute.SetFloat("Time", Time.time);
-            else
-                compute.SetFloat("Time", 10);
-
-            uint cx, cy, cz;
-            compute.GetKernelThreadGroupSizes(kernel, out cx, out cy, out cz);
-
-            var tcount = (int)cx * trianglePerThread;
-            var group = (_data.triangleCount + tcount - 1) / tcount;
-            compute.Dispatch(kernel, group, 1, 1);
+            var c = GetThreadGroupSizeX(compute, kernel) * trianglePerThread;
+            compute.Dispatch(kernel, (_data.triangleCount + c - 1) / c, 1, 1);
         }
 
         void UpdateVertices()
         {
-            ApplyCompute(_computeNoise, _positionSource, _positionBuffer1, 1);
-            ApplyCompute(_computeDigitize, _positionBuffer1, _positionBuffer2, 2);
+            ApplyCompute(_computeJitter, 1, _jitter, _positionSource, _positionBuffer1);
+            ApplyCompute(_computeDigitize, 2, _digitize, _positionBuffer1, _positionBuffer2);
 
-            var kernel = _computeReconstruct.FindKernel("Main");
+            var compute = _computeReconstruct;
+            var kernel = compute.FindKernel("Main");
 
-            _computeReconstruct.SetBuffer(kernel, "PositionSource", _positionSource);
-            _computeReconstruct.SetBuffer(kernel, "PositionModified", _positionBuffer2);
-            _computeReconstruct.SetBuffer(kernel, "NormalSource", _normalSource);
-            _computeReconstruct.SetBuffer(kernel, "TangentSource", _tangentSource);
-            _computeReconstruct.SetBuffer(kernel, "NormalOut", _normalBuffer);
-            _computeReconstruct.SetBuffer(kernel, "TangentOut", _tangentBuffer);
+            compute.SetBuffer(kernel, "PositionSource", _positionSource);
+            compute.SetBuffer(kernel, "NormalSource", _normalSource);
+            compute.SetBuffer(kernel, "TangentSource", _tangentSource);
 
-            _computeReconstruct.SetInt("TriangleCount", _data.triangleCount);
+            compute.SetBuffer(kernel, "PositionModified", _positionBuffer2);
+            compute.SetBuffer(kernel, "NormalOut", _normalBuffer);
+            compute.SetBuffer(kernel, "TangentOut", _tangentBuffer);
 
-            uint cx, cy, cz;
-            _computeReconstruct.GetKernelThreadGroupSizes(kernel, out cx, out cy, out cz);
+            compute.SetInt("TriangleCount", _data.triangleCount);
 
-            var group = (_data.triangleCount + (int)cx - 1) / (int)cx;
-            _computeReconstruct.Dispatch(kernel, group, 1, 1);
+            var c = GetThreadGroupSizeX(compute, kernel);
+            compute.Dispatch(kernel, (_data.triangleCount + c - 1) / c, 1, 1);
         }
 
         #endregion

@@ -9,6 +9,7 @@ RWBuffer<float4> PositionOut;
 CBUFFER_START(Params)
     uint TriangleCount;
     float Time;
+    float Amplitude;
 CBUFFER_END
 
 [numthreads(256, 1, 1)]
@@ -41,7 +42,7 @@ void Main(uint id : SV_DispatchThreadID)
 
     // Noise field
     float3 p_n = call * 1.8 + float3(0, Time / 2, Time / 4);
-    float param = saturate(snoise(p_n).w);
+    float param = saturate(snoise(p_n).w) * Amplitude;
 
     // Position on the unit circle and its tangent
     float3 p_cir = float3(normalize(call.xz), call.y).xzy;

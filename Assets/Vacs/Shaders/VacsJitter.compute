@@ -9,6 +9,7 @@ RWBuffer<float4> PositionOut;
 CBUFFER_START(Params)
     uint TriangleCount;
     float Time;
+    float Amplitude;
 CBUFFER_END
 
 [numthreads(256, 1, 1)]
@@ -29,9 +30,9 @@ void Main(uint id : SV_DispatchThreadID)
     float3 offs = float3(0, Time / 2, Time / 4) * 8;
 
     // Modified vertex positions
-    float3 p1m = p1 + snoise(p1*40+offs/20).xyz * pow(abs(snoise(p1*40-offs/3).w), 8) * 1;
-    float3 p2m = p2 + snoise(p2*40+offs/20).xyz * pow(abs(snoise(p2*40-offs/3).w), 8) * 1;
-    float3 p3m = p3 + snoise(p3*40+offs/20).xyz * pow(abs(snoise(p3*40-offs/3).w), 8) * 1;
+    float3 p1m = p1 + snoise(p1*40+offs/20).xyz * pow(abs(snoise(p1*40-offs/3).w), 8) * Amplitude;
+    float3 p2m = p2 + snoise(p2*40+offs/20).xyz * pow(abs(snoise(p2*40-offs/3).w), 8) * Amplitude;
+    float3 p3m = p3 + snoise(p3*40+offs/20).xyz * pow(abs(snoise(p3*40-offs/3).w), 8) * Amplitude;
 
     // Output
     PositionOut[i1] = float4(p1m, 0);
