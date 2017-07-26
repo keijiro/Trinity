@@ -17,6 +17,7 @@ namespace Vacs
 
         [SerializeField, HideInInspector] ComputeShader _computeNoise;
         [SerializeField, HideInInspector] ComputeShader _computeDigitize;
+        [SerializeField, HideInInspector] ComputeShader _computeReconstruct;
 
         #endregion
 
@@ -27,12 +28,10 @@ namespace Vacs
         ComputeBuffer _positionBuffer2;
 
         ComputeBuffer _normalSource;
-        ComputeBuffer _normalBuffer1;
-        ComputeBuffer _normalBuffer2;
+        ComputeBuffer _normalBuffer;
 
         ComputeBuffer _tangentSource;
-        ComputeBuffer _tangentBuffer1;
-        ComputeBuffer _tangentBuffer2;
+        ComputeBuffer _tangentBuffer;
 
         MaterialPropertyBlock _propertyBlock;
 
@@ -46,13 +45,11 @@ namespace Vacs
             if (_positionBuffer1 == null) _positionBuffer1 = _data.CreatePositionBuffer();
             if (_positionBuffer2 == null) _positionBuffer2 = _data.CreatePositionBuffer();
 
-            if (_normalSource  == null) _normalSource  = _data.CreateNormalBuffer();
-            if (_normalBuffer1 == null) _normalBuffer1 = _data.CreateNormalBuffer();
-            if (_normalBuffer2 == null) _normalBuffer2 = _data.CreateNormalBuffer();
+            if (_normalSource == null) _normalSource = _data.CreateNormalBuffer();
+            if (_normalBuffer == null) _normalBuffer = _data.CreateNormalBuffer();
 
-            if (_tangentSource  == null) _tangentSource  = _data.CreateTangentBuffer();
-            if (_tangentBuffer1 == null) _tangentBuffer1 = _data.CreateTangentBuffer();
-            if (_tangentBuffer2 == null) _tangentBuffer2 = _data.CreateTangentBuffer();
+            if (_tangentSource == null) _tangentSource = _data.CreateTangentBuffer();
+            if (_tangentBuffer == null) _tangentBuffer = _data.CreateTangentBuffer();
         }
 
         void ReleaseVertices()
@@ -60,37 +57,24 @@ namespace Vacs
             if (_positionSource  != null) _positionSource .Release();
             if (_positionBuffer1 != null) _positionBuffer1.Release();
             if (_positionBuffer2 != null) _positionBuffer2.Release();
+            _positionSource = _positionBuffer1 = _positionBuffer2 = null;
 
-            if (_normalSource  != null) _normalSource .Release();
-            if (_normalBuffer1 != null) _normalBuffer1.Release();
-            if (_normalBuffer2 != null) _normalBuffer2.Release();
+            if (_normalSource != null) _normalSource.Release();
+            if (_normalBuffer != null) _normalBuffer.Release();
+            _normalSource = _normalBuffer = null;
 
-            if (_tangentSource  != null) _tangentSource .Release();
-            if (_tangentBuffer1 != null) _tangentBuffer1.Release();
-            if (_tangentBuffer2 != null) _tangentBuffer2.Release();
-
-            _positionSource  = _normalSource  = _tangentSource  = null;
-            _positionBuffer1 = _normalBuffer1 = _tangentBuffer1 = null;
-            _positionBuffer2 = _normalBuffer2 = _tangentBuffer2 = null;
+            if (_tangentSource != null) _tangentSource.Release();
+            if (_tangentBuffer != null) _tangentBuffer.Release();
+            _tangentSource = _tangentBuffer = null;
         }
 
-        void ApplyCompute(
-            ComputeShader compute,
-            ComputeBuffer positionSource, ComputeBuffer normalSource, ComputeBuffer tangentSource,
-            ComputeBuffer positionOut, ComputeBuffer normalOut, ComputeBuffer tangentOut,
-            int trianglePerThread
-        )
+        void ApplyCompute(ComputeShader compute, ComputeBuffer positionSource,
+            ComputeBuffer positionOut, int trianglePerThread)
         {
-            var kernel = compute.FindKernel("Update");
+            var kernel = compute.FindKernel("Main");
 
             compute.SetBuffer(kernel, "PositionSource", positionSource);
-            compute.SetBuffer(kernel, "NormalSource", normalSource);
-            compute.SetBuffer(kernel, "TangentSource", tangentSource);
-
             compute.SetBuffer(kernel, "PositionOut", positionOut);
-            compute.SetBuffer(kernel, "NormalOut", normalOut);
-            compute.SetBuffer(kernel, "TangentOut", tangentOut);
-
             compute.SetInt("TriangleCount", _data.triangleCount);
 
             if (Application.isPlaying)
@@ -103,25 +87,30 @@ namespace Vacs
 
             var tcount = (int)cx * trianglePerThread;
             var group = (_data.triangleCount + tcount - 1) / tcount;
-
             compute.Dispatch(kernel, group, 1, 1);
         }
 
         void UpdateVertices()
         {
-            ApplyCompute(
-                _computeNoise,
-                _positionSource, _normalSource, _tangentSource,
-                _positionBuffer1, _normalBuffer1, _tangentBuffer1,
-                1
-            );
+            ApplyCompute(_computeNoise, _positionSource, _positionBuffer1, 1);
+            ApplyCompute(_computeDigitize, _positionBuffer1, _positionBuffer2, 2);
 
-            ApplyCompute(
-                _computeDigitize,
-                _positionBuffer1, _normalBuffer1, _tangentBuffer1,
-                _positionBuffer2, _normalBuffer2, _tangentBuffer2,
-                2
-            );
+            var kernel = _computeReconstruct.FindKernel("Main");
+
+            _computeReconstruct.SetBuffer(kernel, "PositionSource", _positionSource);
+            _computeReconstruct.SetBuffer(kernel, "PositionModified", _positionBuffer2);
+            _computeReconstruct.SetBuffer(kernel, "NormalSource", _normalSource);
+            _computeReconstruct.SetBuffer(kernel, "TangentSource", _tangentSource);
+            _computeReconstruct.SetBuffer(kernel, "NormalOut", _normalBuffer);
+            _computeReconstruct.SetBuffer(kernel, "TangentOut", _tangentBuffer);
+
+            _computeReconstruct.SetInt("TriangleCount", _data.triangleCount);
+
+            uint cx, cy, cz;
+            _computeReconstruct.GetKernelThreadGroupSizes(kernel, out cx, out cy, out cz);
+
+            var group = (_data.triangleCount + (int)cx - 1) / (int)cx;
+            _computeReconstruct.Dispatch(kernel, group, 1, 1);
         }
 
         #endregion
@@ -150,8 +139,8 @@ namespace Vacs
                 _propertyBlock = new MaterialPropertyBlock();
 
             _propertyBlock.SetBuffer("_PositionBuffer", _positionBuffer2);
-            _propertyBlock.SetBuffer("_NormalBuffer", _normalBuffer2);
-            _propertyBlock.SetBuffer("_TangentBuffer", _tangentBuffer2);
+            _propertyBlock.SetBuffer("_NormalBuffer", _normalBuffer);
+            _propertyBlock.SetBuffer("_TangentBuffer", _tangentBuffer);
             _propertyBlock.SetFloat("_TriangleCount", _data.triangleCount);
 
             meshRenderer.SetPropertyBlock(_propertyBlock);

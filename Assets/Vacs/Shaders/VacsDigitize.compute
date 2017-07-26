@@ -1,15 +1,10 @@
-#pragma kernel Update
+#pragma kernel Main
 
 #include "Common.hlsl"
 #include "SimplexNoise3D.hlsl"
 
 StructuredBuffer<float4> PositionSource;
-StructuredBuffer<float4> NormalSource;
-StructuredBuffer<float4> TangentSource;
-
 RWBuffer<float4> PositionOut;
-RWBuffer<float4> NormalOut;
-RWBuffer<float4> TangentOut;
 
 CBUFFER_START(Params)
     uint TriangleCount;
@@ -17,7 +12,7 @@ CBUFFER_START(Params)
 CBUFFER_END
 
 [numthreads(256, 1, 1)]
-void Update(uint id : SV_DispatchThreadID)
+void Main(uint id : SV_DispatchThreadID)
 {
     if (id * 2 >= TriangleCount) return;
 
@@ -45,15 +40,15 @@ void Update(uint id : SV_DispatchThreadID)
     float3 call = (c123 + c456) / 2;
 
     // Noise field
-    float3 p_n = call * 1.2 + float3(0, Time / 2, Time / 4);
-    float param = saturate(snoise(p_n).w + 0.25);
+    float3 p_n = call * 1.8 + float3(0, Time / 2, Time / 4);
+    float param = saturate(snoise(p_n).w);
 
     // Position on the unit circle and its tangent
     float3 p_cir = float3(normalize(call.xz), call.y).xzy;
     float3 p_tan = -p_cir.zyx * float3(-1, 0, 1);
 
     // Random distribution
-    p_cir.xz *= Random(id) * 0.4 + 0.1;
+    p_cir.xz *= Random(id) * 0.6 + 0.1;
 
     // Quad size
     float size = sin(Random(id + 100000) * PI * 2 + Time * 3) * 0.1 + 0.1;
@@ -76,11 +71,6 @@ void Update(uint id : SV_DispatchThreadID)
     p5 = lerp(p5, p4m, param);
     p6 = lerp(p6, p3m, param);
 
-    // Modified normal vectors
-    float flat = saturate(param * 10);
-    float4 n123 = float4(normalize(cross(p2 - p1, p3 - p1)), 1);
-    float4 n456 = float4(normalize(cross(p5 - p4, p6 - p4)), 1);
-
     // Output
     PositionOut[i1] = float4(p1, 0);
     PositionOut[i2] = float4(p2, 0);
@@ -88,18 +78,4 @@ void Update(uint id : SV_DispatchThreadID)
     PositionOut[i4] = float4(p4, 0);
     PositionOut[i5] = float4(p5, 0);
     PositionOut[i6] = float4(p6, 0);
-
-    NormalOut[i1] = lerp(NormalSource[i1], n123, flat);
-    NormalOut[i2] = lerp(NormalSource[i2], n123, flat);
-    NormalOut[i3] = lerp(NormalSource[i3], n123, flat);
-    NormalOut[i4] = lerp(NormalSource[i4], n456, flat);
-    NormalOut[i5] = lerp(NormalSource[i5], n456, flat);
-    NormalOut[i6] = lerp(NormalSource[i6], n456, flat);
-
-    TangentOut[i1] = TangentSource[i1];
-    TangentOut[i2] = TangentSource[i2];
-    TangentOut[i3] = TangentSource[i3];
-    TangentOut[i4] = TangentSource[i4];
-    TangentOut[i5] = TangentSource[i5];
-    TangentOut[i6] = TangentSource[i6];
 }

@@ -1,0 +1,54 @@
+#pragma kernel Main
+
+#include "Common.hlsl"
+
+StructuredBuffer<float4> PositionSource;
+StructuredBuffer<float4> NormalSource;
+StructuredBuffer<float4> TangentSource;
+
+StructuredBuffer<float4> PositionModified;
+RWBuffer<float4> NormalOut;
+RWBuffer<float4> TangentOut;
+
+CBUFFER_START(Params)
+    uint TriangleCount;
+CBUFFER_END
+
+[numthreads(256, 1, 1)]
+void Main(uint id : SV_DispatchThreadID)
+{
+    if (id >= TriangleCount) return;
+
+    uint i1 = id;
+    uint i2 = id + TriangleCount;
+    uint i3 = id + TriangleCount * 2;
+
+    float3 ps1 = PositionSource[i1].xyz;
+    float3 ps2 = PositionSource[i2].xyz;
+    float3 ps3 = PositionSource[i3].xyz;
+
+    float3 ns1 = NormalSource[i1].xyz;
+    float3 ns2 = NormalSource[i2].xyz;
+    float3 ns3 = NormalSource[i3].xyz;
+
+    float4 ts1 = TangentSource[i1];
+    float4 ts2 = TangentSource[i2];
+    float4 ts3 = TangentSource[i3];
+
+    float3 pm1 = PositionModified[i1].xyz;
+    float3 pm2 = PositionModified[i2].xyz;
+    float3 pm3 = PositionModified[i3].xyz;
+
+    float3 ns = normalize(cross(ps2 - ps1, ps3 - ps1));
+    float3 nm = normalize(cross(pm2 - pm1, pm3 - pm1));
+
+    float param = saturate(distance(ns, nm) * 30);
+
+    NormalOut[i1] = float4(lerp(ns1, nm, param), param);
+    NormalOut[i2] = float4(lerp(ns1, nm, param), param);
+    NormalOut[i3] = float4(lerp(ns1, nm, param), param);
+
+    TangentOut[i1] = ts1;
+    TangentOut[i2] = ts2;
+    TangentOut[i3] = ts3;
+}

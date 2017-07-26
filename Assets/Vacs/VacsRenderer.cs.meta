@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: e0ccb040b0821d64eb82fb23a7046e94
-timeCreated: 1501063245
+timeCreated: 1501072877
 licenseType: Pro
 MonoImporter:
   serializedVersion: 2
@@ -8,6 +8,8 @@ MonoImporter:
   - _data: {instanceID: 0}
   - _computeNoise: {fileID: 7200000, guid: 8f3575c7de6a6944d817dfd5934cd32a, type: 3}
   - _computeDigitize: {fileID: 7200000, guid: 9c5b04c05f90e5e42a687fbb6a2a8637, type: 3}
+  - _computeReconstruct: {fileID: 7200000, guid: 72f506609fb08bd45ba4775a11e3f6c5,
+      type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

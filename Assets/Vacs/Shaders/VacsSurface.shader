@@ -81,7 +81,8 @@ Shader "Vacs/Standard"
             o.Metallic = _Metallic;
 
             float flip = input.vface < 0 ? -1 : 1;
-            o.Normal = UnpackScaleNormal(normal, 1 - input.flat) * flip;
+            //o.Normal = UnpackScaleNormal(normal, 1 - input.flat) * flip;
+            o.Normal = UnpackNormal(normal) * flip;
             o.Occlusion = LerpOneTo(occlusion, 1 - input.flat);
         }
 
