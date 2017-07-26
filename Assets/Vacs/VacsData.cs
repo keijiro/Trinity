@@ -13,6 +13,11 @@ namespace Vacs
             get { return _positionData.Length; }
         }
 
+        /// Number of triangles.
+        public int triangleCount {
+            get { return _positionData.Length / 3; }
+        }
+
         /// Reference to the template mesh object.
         public Mesh templateMesh {
             get { return _mesh; }
@@ -64,60 +69,66 @@ namespace Vacs
         {
             // Input
             var inVertices = source.vertices;
-            var inNormals = source.normals;
+            var inNormals  = source.normals;
             var inTangents = source.tangents;
-            var inUV = source.uv;
-            var inIndices = source.GetIndices(0);
+            var inUV       = source.uv;
+            var inIndices  = source.GetIndices(0);
+
+            // Vertex/Triangle count
+            var vcount = inIndices.Length;
+            var tcount = vcount / 3;
 
             // Output
-            var outVertices = new List<Vector4>();
-            var outNormals = new List<Vector4>();
-            var outTangents = new List<Vector4>();
-            var outUV = new List<Vector2>();
+            var outVertices = new Vector4 [vcount];
+            var outNormals  = new Vector4 [vcount];
+            var outTangents = new Vector4 [vcount];
+            var outUV       = new Vector2 [vcount];
 
             // Enumerate all the triangles and belonging vertices.
-            for (var i = 0; i < inIndices.Length; i += 3)
+            for (var i = 0; i < tcount; i++)
             {
-                // Simply copy the original vertex attributes.
-                // (position, normal, tangent, UV1)
-                var i1 = inIndices[i + 0];
-                var i2 = inIndices[i + 1];
-                var i3 = inIndices[i + 2];
+                var i1 = inIndices[i * 3    ];
+                var i2 = inIndices[i * 3 + 1];
+                var i3 = inIndices[i * 3 + 2];
 
-                outVertices.Add(inVertices[i1]);
-                outVertices.Add(inVertices[i2]);
-                outVertices.Add(inVertices[i3]);
+                var o1 = i;
+                var o2 = i + tcount;
+                var o3 = i + tcount * 2;
 
-                outNormals.Add(inNormals[i1]);
-                outNormals.Add(inNormals[i2]);
-                outNormals.Add(inNormals[i3]);
+                outVertices[o1] = inVertices[i1];
+                outVertices[o2] = inVertices[i2];
+                outVertices[o3] = inVertices[i3];
 
-                outTangents.Add(inTangents[i1]);
-                outTangents.Add(inTangents[i2]);
-                outTangents.Add(inTangents[i3]);
+                outNormals[o1] = inNormals[i1];
+                outNormals[o2] = inNormals[i2];
+                outNormals[o3] = inNormals[i3];
 
-                outUV.Add(inUV[i1]);
-                outUV.Add(inUV[i2]);
-                outUV.Add(inUV[i3]);
+                outTangents[o1] = inTangents[i1];
+                outTangents[o2] = inTangents[i2];
+                outTangents[o3] = inTangents[i3];
+
+                outUV[i * 3    ] = inUV[i1];
+                outUV[i * 3 + 1] = inUV[i2];
+                outUV[i * 3 + 2] = inUV[i3];
             }
 
-            // Enumerate vertex indices.
-            var indices = Enumerable.Range(0, outVertices.Count).ToArray();
+            // Enumerate the vertex indices.
+            var indices = Enumerable.Range(0, outVertices.Length).ToArray();
 
             // Build a new mesh.
             _mesh = new Mesh();
             _mesh.name = source.name;
-            _mesh.vertices = new Vector3[outVertices.Count];
-            _mesh.SetUVs(0, outUV);
+            _mesh.vertices = new Vector3 [outVertices.Length];
+            _mesh.uv = outUV;
             _mesh.subMeshCount = 1;
             _mesh.SetIndices(indices, MeshTopology.Triangles, 0);
             _mesh.bounds = source.bounds;
             _mesh.UploadMeshData(true);
 
-            // Convert the data into Vector4 arrays.
-            _positionData = outVertices.ToArray();
-            _normalData   = outNormals .ToArray();
-            _tangentData  = outTangents.ToArray();
+            // Output arrays.
+            _positionData = outVertices;
+            _normalData   = outNormals ;
+            _tangentData  = outTangents;
         }
 
         #endif

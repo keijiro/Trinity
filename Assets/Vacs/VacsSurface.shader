@@ -32,6 +32,7 @@ Shader "Vacs/Standard"
         {
             float2 uv_MainTex;
             half vface : VFACE;
+            half flat;
         };
 
         half4 _Color;
@@ -41,19 +42,29 @@ Shader "Vacs/Standard"
         sampler2D _NormalMap;
         sampler2D _OcclusionMap;
 
-
 #ifdef UNITY_COMPILER_HLSL
         StructuredBuffer<float4> _PositionBuffer;
         StructuredBuffer<float4> _NormalBuffer;
         StructuredBuffer<float4> _TangentBuffer;
+        uint _TriangleCount;
 #endif
 
-        void VertexModifier(inout AppData v)
+        void VertexModifier(inout AppData v, out Input data)
         {
+            UNITY_INITIALIZE_OUTPUT(Input, data);
+
 #ifdef UNITY_COMPILER_HLSL
-            v.vertex.xyz = _PositionBuffer[v.vertexID].xyz;
-            v.normal.xyz = _NormalBuffer  [v.vertexID].xyz;
-            v.tangent    = _TangentBuffer [v.vertexID];
+            uint offs = v.vertexID / 3 + (v.vertexID % 3) * _TriangleCount;
+
+            float3 p = _PositionBuffer[offs].xyz;
+            float4 n = _NormalBuffer[offs];
+            float4 t = _TangentBuffer [offs];
+
+            v.vertex.xyz = p.xyz;
+            v.normal.xyz = n.xyz;
+            v.tangent = t;
+
+            data.flat = n.w;
 #endif
         }
 
@@ -69,8 +80,9 @@ Shader "Vacs/Standard"
             o.Smoothness = _Smoothness;
             o.Metallic = _Metallic;
 
-            o.Normal = UnpackNormal(normal) * (input.vface < 0 ? -1 : 1);
-            o.Occlusion = occlusion;
+            float flip = input.vface < 0 ? -1 : 1;
+            o.Normal = UnpackScaleNormal(normal, 1 - input.flat) * flip;
+            o.Occlusion = LerpOneTo(occlusion, 1 - input.flat);
         }
 
         ENDCG
