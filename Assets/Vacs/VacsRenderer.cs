@@ -11,6 +11,7 @@ namespace Vacs
 
         [SerializeField] VacsData _data;
         [SerializeField, Range(0, 1)] float _dissolve;
+        [SerializeField, Range(0, 1)] float _inflate;
         [SerializeField, Range(0, 1)] float _voxelize;
         [SerializeField, Range(0, 1)] float _jitter;
         [SerializeField, Range(0, 1)] float _digitize;
@@ -20,6 +21,7 @@ namespace Vacs
         #region Hidden attributes
 
         [SerializeField, HideInInspector] ComputeShader _computeDissolve;
+        [SerializeField, HideInInspector] ComputeShader _computeInflate;
         [SerializeField, HideInInspector] ComputeShader _computeVoxelize;
         [SerializeField, HideInInspector] ComputeShader _computeJitter;
         [SerializeField, HideInInspector] ComputeShader _computeDigitize;
@@ -85,6 +87,9 @@ namespace Vacs
             var kernel = compute.FindKernel("Main");
 
             compute.SetBuffer(kernel, "PositionSource", _positionSource);
+            compute.SetBuffer(kernel, "NormalSource", _normalSource);
+            compute.SetBuffer(kernel, "TangentSource", _tangentSource);
+
             compute.SetBuffer(kernel, "PositionInput", inputBuffer);
             compute.SetBuffer(kernel, "PositionOutput", outputBuffer);
 
@@ -99,9 +104,10 @@ namespace Vacs
         void UpdateVertices()
         {
             ApplyCompute(_computeDissolve, 1, _dissolve, _positionSource, _positionBuffer1);
-            ApplyCompute(_computeVoxelize, 1, _voxelize, _positionBuffer1, _positionBuffer2);
-            ApplyCompute(_computeJitter, 1, _jitter, _positionBuffer2, _positionBuffer1);
-            ApplyCompute(_computeDigitize, 2, _digitize, _positionBuffer1, _positionBuffer2);
+            ApplyCompute(_computeInflate, 1, _inflate, _positionBuffer1, _positionBuffer2);
+            ApplyCompute(_computeVoxelize, 1, _voxelize, _positionBuffer2, _positionBuffer1);
+            ApplyCompute(_computeJitter, 1, _jitter, _positionBuffer1, _positionBuffer2);
+            ApplyCompute(_computeDigitize, 2, _digitize, _positionBuffer2, _positionBuffer1);
 
             var compute = _computeReconstruct;
             var kernel = compute.FindKernel("Main");
@@ -146,7 +152,7 @@ namespace Vacs
             if (_drawProps == null)
                 _drawProps = new MaterialPropertyBlock();
 
-            _drawProps.SetBuffer("_PositionBuffer", _positionBuffer2);
+            _drawProps.SetBuffer("_PositionBuffer", _positionBuffer1);
             _drawProps.SetBuffer("_NormalBuffer", _normalBuffer);
             _drawProps.SetBuffer("_TangentBuffer", _tangentBuffer);
             _drawProps.SetFloat("_TriangleCount", _data.triangleCount);

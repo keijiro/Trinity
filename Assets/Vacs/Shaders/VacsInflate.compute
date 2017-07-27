@@ -1,0 +1,44 @@
+#pragma kernel Main
+
+#include "Common.hlsl"
+#include "SimplexNoise3D.hlsl"
+
+StructuredBuffer<float4> PositionSource;
+StructuredBuffer<float4> NormalSource;
+StructuredBuffer<float4> PositionInput;
+RWBuffer<float4> PositionOutput;
+
+CBUFFER_START(Params)
+    uint TriangleCount;
+    float Time;
+    float Amplitude;
+CBUFFER_END
+
+[numthreads(256, 1, 1)]
+void Main(uint id : SV_DispatchThreadID)
+{
+    if (id >= TriangleCount) return;
+
+    const uint i1 = id;
+    const uint i2 = id + TriangleCount;
+    const uint i3 = id + TriangleCount * 2;
+
+    const float3 P1 = PositionSource[i1].xyz;
+    const float3 P2 = PositionSource[i2].xyz;
+    const float3 P3 = PositionSource[i3].xyz;
+
+    const float3 N1 = NormalSource[i1].xyz;
+    const float3 N2 = NormalSource[i2].xyz;
+    const float3 N3 = NormalSource[i3].xyz;
+
+    const float3 Voffs1 = float3(0, 0.8f, 1.4f) * Time;
+    const float freq1 = 1;
+    const float amp = 0.5f * Amplitude;
+    float n1 = max(0, (snoise(P1 * freq1 + Voffs1).w + 0.5) * amp);
+    float n2 = max(0, (snoise(P2 * freq1 + Voffs1).w + 0.5) * amp);
+    float n3 = max(0, (snoise(P3 * freq1 + Voffs1).w + 0.5) * amp);
+
+    PositionOutput[i1] = float4(PositionInput[i1].xyz + N1 * n1, 0);
+    PositionOutput[i2] = float4(PositionInput[i2].xyz + N2 * n2, 0);
+    PositionOutput[i3] = float4(PositionInput[i3].xyz + N3 * n3, 0);
+}
