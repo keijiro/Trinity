@@ -34,7 +34,9 @@ void Main(uint id : SV_DispatchThreadID)
 
     // Animate the interpolation parameter with the noise field.
     const float3 Pn = C * 3 + float3(0, 0, Time);
-    const float param = max(0, 1 + snoise(Pn).w * 4 * Amplitude);
+    const float amp1 = smoothstep(0, 0.75f, Amplitude) * 8;
+    const float amp2 = smoothstep(0.5f, 1, Amplitude) * 8.1;
+    const float param = max(0, 1 + snoise(Pn).w * amp1 - amp2);
 
     PositionOutput[i1] = float4(lerp(C, P1, param), 0);
     PositionOutput[i2] = float4(lerp(C, P2, param), 0);
