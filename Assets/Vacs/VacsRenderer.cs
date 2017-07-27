@@ -39,21 +39,14 @@ namespace Vacs
         ComputeBuffer _tangentSource;
         ComputeBuffer _tangentBuffer;
 
-        MaterialPropertyBlock _propertyBlock;
+        MaterialPropertyBlock _drawProps;
 
         #endregion
 
-        #region Internal resource handling
+        #region Internal properties and methods
 
         float globalTime {
             get { return Application.isPlaying ? Time.time : 10; }
-        }
-
-        int GetThreadGroupSizeX(ComputeShader compute, int kernel)
-        {
-            uint cx, cy, cz;
-            compute.GetKernelThreadGroupSizes(kernel, out cx, out cy, out cz);
-            return (int)cx;
         }
 
         void SetupVertices()
@@ -87,42 +80,44 @@ namespace Vacs
 
         void ApplyCompute(
             ComputeShader compute, int trianglePerThread, float amplitude,
-            ComputeBuffer positionSource, ComputeBuffer positionOut)
+            ComputeBuffer inputBuffer, ComputeBuffer outputBuffer)
         {
             var kernel = compute.FindKernel("Main");
 
-            compute.SetBuffer(kernel, "PositionSource", positionSource);
-            compute.SetBuffer(kernel, "PositionOut", positionOut);
+            compute.SetBuffer(kernel, "PositionSource", _positionSource);
+            compute.SetBuffer(kernel, "PositionInput", inputBuffer);
+            compute.SetBuffer(kernel, "PositionOutput", outputBuffer);
 
             compute.SetInt("TriangleCount", _data.triangleCount);
             compute.SetFloat("Amplitude", amplitude);
             compute.SetFloat("Time", globalTime);
 
-            var c = GetThreadGroupSizeX(compute, kernel) * trianglePerThread;
+            var c = compute.GetKernelThreadGroupSizeX(kernel) * trianglePerThread;
             compute.Dispatch(kernel, (_data.triangleCount + c - 1) / c, 1, 1);
         }
 
         void UpdateVertices()
         {
-            ApplyCompute(_computeVoxelize, 1, _voxelize, _positionSource, _positionBuffer1);
-            ApplyCompute(_computeJitter, 1, _jitter, _positionBuffer1, _positionBuffer2);
-            ApplyCompute(_computeDissolve, 1, _dissolve, _positionBuffer2, _positionBuffer1);
+            ApplyCompute(_computeDissolve, 1, _dissolve, _positionSource, _positionBuffer1);
+            ApplyCompute(_computeVoxelize, 1, _voxelize, _positionBuffer1, _positionBuffer2);
+            ApplyCompute(_computeJitter, 1, _jitter, _positionBuffer2, _positionBuffer1);
             ApplyCompute(_computeDigitize, 2, _digitize, _positionBuffer1, _positionBuffer2);
 
             var compute = _computeReconstruct;
             var kernel = compute.FindKernel("Main");
 
             compute.SetBuffer(kernel, "PositionSource", _positionSource);
-            compute.SetBuffer(kernel, "NormalSource", _normalSource);
-            compute.SetBuffer(kernel, "TangentSource", _tangentSource);
-
             compute.SetBuffer(kernel, "PositionModified", _positionBuffer2);
-            compute.SetBuffer(kernel, "NormalOut", _normalBuffer);
-            compute.SetBuffer(kernel, "TangentOut", _tangentBuffer);
+
+            compute.SetBuffer(kernel, "NormalInput", _normalSource);
+            compute.SetBuffer(kernel, "NormalOutput", _normalBuffer);
+
+            compute.SetBuffer(kernel, "TangentInput", _tangentSource);
+            compute.SetBuffer(kernel, "TangentOutput", _tangentBuffer);
 
             compute.SetInt("TriangleCount", _data.triangleCount);
 
-            var c = GetThreadGroupSizeX(compute, kernel);
+            var c = compute.GetKernelThreadGroupSizeX(kernel);
             compute.Dispatch(kernel, (_data.triangleCount + c - 1) / c, 1, 1);
         }
 
@@ -148,15 +143,15 @@ namespace Vacs
         {
             var meshRenderer = GetComponent<MeshRenderer>();
 
-            if (_propertyBlock == null)
-                _propertyBlock = new MaterialPropertyBlock();
+            if (_drawProps == null)
+                _drawProps = new MaterialPropertyBlock();
 
-            _propertyBlock.SetBuffer("_PositionBuffer", _positionBuffer2);
-            _propertyBlock.SetBuffer("_NormalBuffer", _normalBuffer);
-            _propertyBlock.SetBuffer("_TangentBuffer", _tangentBuffer);
-            _propertyBlock.SetFloat("_TriangleCount", _data.triangleCount);
+            _drawProps.SetBuffer("_PositionBuffer", _positionBuffer2);
+            _drawProps.SetBuffer("_NormalBuffer", _normalBuffer);
+            _drawProps.SetBuffer("_TangentBuffer", _tangentBuffer);
+            _drawProps.SetFloat("_TriangleCount", _data.triangleCount);
 
-            meshRenderer.SetPropertyBlock(_propertyBlock);
+            meshRenderer.SetPropertyBlock(_drawProps);
         }
 
         #endregion

@@ -13,8 +13,9 @@ namespace MiniEngineAO
         #region Exposed properties
 
         // These properties are simply exposed from the original MiniEngine
-        // AO shader. Some of them are not useful nor intuitive enough.
-        // TODO: Needs UI/UX rework.
+        // AO effect. Most of them are hidden in our inspector because they
+        // are not useful nor user-friencly. If you want to try them out,
+        // uncomment the first line of AmbientOcclusionEditor.cs.
 
         [SerializeField, Range(-8, 0)] float _noiseFilterTolerance = 0;
 
@@ -24,7 +25,7 @@ namespace MiniEngineAO
             set { _noiseFilterTolerance = value; }
         }
 
-        [SerializeField, Range(-8, -1)] float _blurTolerance = -5;
+        [SerializeField, Range(-8, -1)] float _blurTolerance = -4.6f;
 
         public float blurTolerance
         {
@@ -266,6 +267,7 @@ namespace MiniEngineAO
         #region Internal objects
 
         Camera _camera;
+        int _drawCountPerFrame; // used to detect single-pass stereo
 
         RTHandle _depthCopy;
         RTHandle _linearDepth;
@@ -313,14 +315,24 @@ namespace MiniEngineAO
             var rebuild = CheckPropertiesChanged();
 
             // Check if the screen size was changed from the previous frame.
-            // We have to rebuild the command buffer if it's changed.
-            rebuild |= !RTHandle.CheckBaseDimensions(_camera.pixelWidth, _camera.pixelHeight);
+            // We must rebuild the command buffers when it's changed.
+            rebuild |= !RTHandle.CheckBaseDimensions(
+                _camera.pixelWidth * (singlePassStereoEnabled ? 2 : 1),
+                _camera.pixelHeight
+            );
 
-            // In edit mode, it's difficult to check all the elements that
-            // affect the AO, so we update the command buffer every time.
+            // In edit mode, it's almost impossible to check up all the factors
+            // that can affect AO, so we update them every frame.
             rebuild |= !Application.isPlaying;
 
             if (rebuild) RebuildCommandBuffers();
+
+            _drawCountPerFrame = 0;
+        }
+
+        void OnPreRender()
+        {
+            _drawCountPerFrame++;
         }
 
         void OnDestroy()
@@ -352,6 +364,22 @@ namespace MiniEngineAO
         #endregion
 
         #region Private methods
+
+        // There is no standard method to check if single-pass stereo rendering
+        // is enabled or not, so we use a little bit hackish way to detect it.
+        // Although it fails at the first frame and causes a single-frame
+        // glitch, that might be unnoticeable in most cases.
+        // FIXME: We need a proper way to do this.
+        bool singlePassStereoEnabled
+        {
+            get {
+                return
+                    _camera != null &&
+                    _camera.stereoEnabled &&
+                    _camera.targetTexture == null &&
+                    _drawCountPerFrame == 1;
+            }
+        }
 
         bool ambientOnly
         {
@@ -451,7 +479,10 @@ namespace MiniEngineAO
             UnregisterCommandBuffers();
 
             // Update the base dimensions and reallocate static RTs.
-            RTHandle.SetBaseDimensions(_camera.pixelWidth, _camera.pixelHeight);
+            RTHandle.SetBaseDimensions(
+                _camera.pixelWidth * (singlePassStereoEnabled ? 2 : 1),
+                _camera.pixelHeight
+            );
 
             _tiledDepth1.AllocateNow();
             _tiledDepth2.AllocateNow();
@@ -627,6 +658,7 @@ namespace MiniEngineAO
             // Note about the "2.0f * ":  Diameter = 2 * Radius
             var ThicknessMultiplier = 2 * TanHalfFovH * ScreenspaceDiameter / source.width;
             if (!source.isTiled) ThicknessMultiplier *= 2;
+            if (singlePassStereoEnabled) ThicknessMultiplier *= 2;
 
             // This will transform a depth value from [0, thickness] to [0, 1].
             var InverseRangeFactor = 1 / ThicknessMultiplier;

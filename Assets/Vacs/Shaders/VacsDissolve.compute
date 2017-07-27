@@ -3,8 +3,8 @@
 #include "Common.hlsl"
 #include "SimplexNoise3D.hlsl"
 
-StructuredBuffer<float4> PositionSource;
-RWBuffer<float4> PositionOut;
+StructuredBuffer<float4> PositionInput;
+RWBuffer<float4> PositionOutput;
 
 CBUFFER_START(Params)
     uint TriangleCount;
@@ -17,34 +17,26 @@ void Main(uint id : SV_DispatchThreadID)
 {
     if (id >= TriangleCount) return;
 
-    // Vertex indices
-    uint i1 = id;
-    uint i2 = id + TriangleCount;
-    uint i3 = id + TriangleCount * 2;
+    const uint i1 = id;
+    const uint i2 = id + TriangleCount;
+    const uint i3 = id + TriangleCount * 2;
 
-    // Vertex positions
-    float3 p1 = PositionSource[i1].xyz;
-    float3 p2 = PositionSource[i2].xyz;
-    float3 p3 = PositionSource[i3].xyz;
+    const float3 P1 = PositionInput[i1].xyz;
+    const float3 P2 = PositionInput[i2].xyz;
+    const float3 P3 = PositionInput[i3].xyz;
 
-    // Centroid
-    float3 pc = (p1 + p2 + p3) / 3;
+    // Centroid (triangle)
+    float3 C = (P1 + P2 + P3) / 3;
 
-    // Clustering
-    const float csize = 0.04;
-    pc = pc - (frac(pc / csize) - 0.5) * csize;
+    // Centroid (belonging cluster)
+    const float cluster_size = 0.04;
+    C -= (frac(C / cluster_size) - 0.5) * cluster_size;
 
-    // Noise field
-    float3 np = pc * 3 + float3(0, 0, Time);
-    float param = 1 + snoise(np).w * 1.4 * Amplitude;
+    // Animate the interpolation parameter with the noise field.
+    const float3 Pn = C * 3 + float3(0, 0, Time);
+    const float param = max(0, 1 + snoise(Pn).w * 4 * Amplitude);
 
-    // Modified vertex positions
-    float3 p1m = lerp(pc, p1, param);
-    float3 p2m = lerp(pc, p2, param);
-    float3 p3m = lerp(pc, p3, param);
-
-    // Output
-    PositionOut[i1] = float4(p1m, 0);
-    PositionOut[i2] = float4(p2m, 0);
-    PositionOut[i3] = float4(p3m, 0);
+    PositionOutput[i1] = float4(lerp(C, P1, param), 0);
+    PositionOutput[i2] = float4(lerp(C, P2, param), 0);
+    PositionOutput[i3] = float4(lerp(C, P3, param), 0);
 }

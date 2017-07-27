@@ -3,12 +3,13 @@
 #include "Common.hlsl"
 
 StructuredBuffer<float4> PositionSource;
-StructuredBuffer<float4> NormalSource;
-StructuredBuffer<float4> TangentSource;
-
 StructuredBuffer<float4> PositionModified;
-RWBuffer<float4> NormalOut;
-RWBuffer<float4> TangentOut;
+
+StructuredBuffer<float4> NormalInput;
+RWBuffer<float4> NormalOutput;
+
+StructuredBuffer<float4> TangentInput;
+RWBuffer<float4> TangentOutput;
 
 CBUFFER_START(Params)
     uint TriangleCount;
@@ -23,32 +24,26 @@ void Main(uint id : SV_DispatchThreadID)
     uint i2 = id + TriangleCount;
     uint i3 = id + TriangleCount * 2;
 
-    float3 ps1 = PositionSource[i1].xyz;
-    float3 ps2 = PositionSource[i2].xyz;
-    float3 ps3 = PositionSource[i3].xyz;
+    float3 Ps1 = PositionSource[i1].xyz;
+    float3 Ps2 = PositionSource[i2].xyz;
+    float3 Ps3 = PositionSource[i3].xyz;
 
-    float3 ns1 = NormalSource[i1].xyz;
-    float3 ns2 = NormalSource[i2].xyz;
-    float3 ns3 = NormalSource[i3].xyz;
+    float3 Pm1 = PositionModified[i1].xyz;
+    float3 Pm2 = PositionModified[i2].xyz;
+    float3 Pm3 = PositionModified[i3].xyz;
 
-    float4 ts1 = TangentSource[i1];
-    float4 ts2 = TangentSource[i2];
-    float4 ts3 = TangentSource[i3];
+    // Calculate the normals of the source and modified triangles.
+    float3 Ns = normalize(cross(Ps2 - Ps1, Ps3 - Ps1));
+    float3 Nm = normalize(cross(Pm2 - Pm1, Pm3 - Pm1));
 
-    float3 pm1 = PositionModified[i1].xyz;
-    float3 pm2 = PositionModified[i2].xyz;
-    float3 pm3 = PositionModified[i3].xyz;
+    // Calculate the parameter based on the difference in the normals.
+    float param = saturate(distance(Ns, Nm) * 30);
 
-    float3 ns = normalize(cross(ps2 - ps1, ps3 - ps1));
-    float3 nm = normalize(cross(pm2 - pm1, pm3 - pm1));
+    NormalOutput[i1] = float4(lerp(NormalInput[i1].xyz, Nm, param), param);
+    NormalOutput[i2] = float4(lerp(NormalInput[i2].xyz, Nm, param), param);
+    NormalOutput[i3] = float4(lerp(NormalInput[i3].xyz, Nm, param), param);
 
-    float param = saturate(distance(ns, nm) * 30);
-
-    NormalOut[i1] = float4(lerp(ns1, nm, param), param);
-    NormalOut[i2] = float4(lerp(ns1, nm, param), param);
-    NormalOut[i3] = float4(lerp(ns1, nm, param), param);
-
-    TangentOut[i1] = ts1;
-    TangentOut[i2] = ts2;
-    TangentOut[i3] = ts3;
+    TangentOutput[i1] = TangentInput[i1];
+    TangentOutput[i2] = TangentInput[i2];
+    TangentOutput[i3] = TangentInput[i3];
 }

@@ -2,8 +2,8 @@
 
 #include "Common.hlsl"
 
-StructuredBuffer<float4> PositionSource;
-RWBuffer<float4> PositionOut;
+StructuredBuffer<float4> PositionInput;
+RWBuffer<float4> PositionOutput;
 
 CBUFFER_START(Params)
     uint TriangleCount;
@@ -15,24 +15,20 @@ void Main(uint id : SV_DispatchThreadID)
 {
     if (id >= TriangleCount) return;
 
-    // Vertex indices
-    uint i1 = id;
-    uint i2 = id + TriangleCount;
-    uint i3 = id + TriangleCount * 2;
+    const uint i1 = id;
+    const uint i2 = id + TriangleCount;
+    const uint i3 = id + TriangleCount * 2;
 
-    // Vertex positions
-    float3 p1 = PositionSource[i1].xyz;
-    float3 p2 = PositionSource[i2].xyz;
-    float3 p3 = PositionSource[i3].xyz;
+    const float3 P1 = PositionInput[i1].xyz;
+    const float3 P2 = PositionInput[i2].xyz;
+    const float3 P3 = PositionInput[i3].xyz;
 
-    // Modified vertex positions
-    const float size = 0.1;
-    float3 p1m = p1 - (frac(p1 / size) - 0.5) * size * Amplitude;
-    float3 p2m = p2 - (frac(p2 / size) - 0.5) * size * Amplitude;
-    float3 p3m = p3 - (frac(p3 / size) - 0.5) * size * Amplitude;
+    const float voxel_size = 0.1;
+    const float3 D1 = (frac(P1 / voxel_size) - 0.5) * voxel_size;
+    const float3 D2 = (frac(P2 / voxel_size) - 0.5) * voxel_size;
+    const float3 D3 = (frac(P3 / voxel_size) - 0.5) * voxel_size;
 
-    // Output
-    PositionOut[i1] = float4(p1m, 0);
-    PositionOut[i2] = float4(p2m, 0);
-    PositionOut[i3] = float4(p3m, 0);
+    PositionOutput[i1] = float4(P1 - D1 * Amplitude, 0);
+    PositionOutput[i2] = float4(P2 - D2 * Amplitude, 0);
+    PositionOutput[i3] = float4(P3 - D3 * Amplitude, 0);
 }

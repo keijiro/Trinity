@@ -4,7 +4,8 @@
 #include "SimplexNoise3D.hlsl"
 
 StructuredBuffer<float4> PositionSource;
-RWBuffer<float4> PositionOut;
+StructuredBuffer<float4> PositionInput;
+RWBuffer<float4> PositionOutput;
 
 CBUFFER_START(Params)
     uint TriangleCount;
@@ -17,25 +18,30 @@ void Main(uint id : SV_DispatchThreadID)
 {
     if (id >= TriangleCount) return;
 
-    // Vertex indices
-    uint i1 = id;
-    uint i2 = id + TriangleCount;
-    uint i3 = id + TriangleCount * 2;
+    const uint i1 = id;
+    const uint i2 = id + TriangleCount;
+    const uint i3 = id + TriangleCount * 2;
 
-    // Vertex positions
-    float3 p1 = PositionSource[i1].xyz;
-    float3 p2 = PositionSource[i2].xyz;
-    float3 p3 = PositionSource[i3].xyz;
+    const float3 P1 = PositionSource[i1].xyz;
+    const float3 P2 = PositionSource[i2].xyz;
+    const float3 P3 = PositionSource[i3].xyz;
 
-    float3 offs = float3(0, Time / 2, Time / 4) * 8;
+    // Low amplitude noise
+    const float3 Voffs1 = float3(0, 0.8f, 1.4f) * Time;
+    const float freq1 = 20;
+    const float amp1 = 0.01f;
+    float3 N1 = snoise(P1 * freq1 + Voffs1).xyz * amp1;
+    float3 N2 = snoise(P2 * freq1 + Voffs1).xyz * amp1;
+    float3 N3 = snoise(P3 * freq1 + Voffs1).xyz * amp1;
 
-    // Modified vertex positions
-    float3 p1m = p1 + snoise(p1*40+offs/20).xyz * pow(abs(snoise(p1*40-offs/3).w), 8) * Amplitude;
-    float3 p2m = p2 + snoise(p2*40+offs/20).xyz * pow(abs(snoise(p2*40-offs/3).w), 8) * Amplitude;
-    float3 p3m = p3 + snoise(p3*40+offs/20).xyz * pow(abs(snoise(p3*40-offs/3).w), 8) * Amplitude;
+    // High amplitude noise
+    const float3 Voffs2 = float3(0, 0.2f, -0.4f) * Time;
+    const float freq2 = 40;
+    N1 *= 1 + pow(abs(snoise(P1 * freq2 + Voffs2).w), 8) * 100;
+    N2 *= 1 + pow(abs(snoise(P2 * freq2 + Voffs2).w), 8) * 100;
+    N3 *= 1 + pow(abs(snoise(P3 * freq2 + Voffs2).w), 8) * 100;
 
-    // Output
-    PositionOut[i1] = float4(p1m, 0);
-    PositionOut[i2] = float4(p2m, 0);
-    PositionOut[i3] = float4(p3m, 0);
+    PositionOutput[i1] = float4(PositionInput[i1].xyz + N1 * Amplitude, 0);
+    PositionOutput[i2] = float4(PositionInput[i2].xyz + N2 * Amplitude, 0);
+    PositionOutput[i3] = float4(PositionInput[i3].xyz + N3 * Amplitude, 0);
 }

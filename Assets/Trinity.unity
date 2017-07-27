@@ -215,10 +215,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _noiseFilterTolerance: 0
-  _blurTolerance: -6.35
+  _blurTolerance: -4.6
   _upsampleTolerance: -12
-  _rejectionFalloff: 2.5
-  _strength: 1.172
+  _rejectionFalloff: 2.45
+  _strength: 1.52
   _debug: 0
   _downsample1Compute: {fileID: 7200000, guid: 659dc93a3764e164e8dafb2061ff317b, type: 3}
   _downsample2Compute: {fileID: 7200000, guid: dc4dd2f3a1157884e95a081b25b5731d, type: 3}
@@ -692,8 +692,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _data: {fileID: 11400000, guid: 59e6825501361124fb40aa0eed98eda7, type: 2}
-  _dissolve: 1
-  _voxelize: 0
+  _dissolve: 0.48
+  _voxelize: 0.627
   _jitter: 0
   _digitize: 0
   _computeDissolve: {fileID: 7200000, guid: bc3c62471aa645d41b4284dd31e9987f, type: 3}

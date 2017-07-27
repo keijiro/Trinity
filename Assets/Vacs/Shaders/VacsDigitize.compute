@@ -4,7 +4,8 @@
 #include "SimplexNoise3D.hlsl"
 
 StructuredBuffer<float4> PositionSource;
-RWBuffer<float4> PositionOut;
+StructuredBuffer<float4> PositionInput;
+RWBuffer<float4> PositionOutput;
 
 CBUFFER_START(Params)
     uint TriangleCount;
@@ -17,66 +18,61 @@ void Main(uint id : SV_DispatchThreadID)
 {
     if (id * 2 >= TriangleCount) return;
 
-    // First triangle
-    uint i1 = id * 2;
-    uint i2 = id * 2 + TriangleCount;
-    uint i3 = id * 2 + TriangleCount * 2;
+    // Generate random numbers in advance.
+    const float rand1 = Random(id);
+    const float rand2 = Random(id + 100000);
 
-    // Second triangle (consecutive)
-    uint i4 = i1 + 1;
-    uint i5 = i2 + 1;
-    uint i6 = i3 + 1;
+    // The vertex indices of the first triangle
+    const uint i1 = id * 2;
+    const uint i2 = id * 2 + TriangleCount;
+    const uint i3 = id * 2 + TriangleCount * 2;
 
-    // Vertex positions
-    float3 p1 = PositionSource[i1].xyz;
-    float3 p2 = PositionSource[i2].xyz;
-    float3 p3 = PositionSource[i3].xyz;
-    float3 p4 = PositionSource[i4].xyz;
-    float3 p5 = PositionSource[i5].xyz;
-    float3 p6 = PositionSource[i6].xyz;
+    // The vertex indices of the second triangle
+    const uint i4 = i1 + 1;
+    const uint i5 = i2 + 1;
+    const uint i6 = i3 + 1;
+
+    // The vertex positions from the original source
+    const float3 P1 = PositionSource[i1].xyz;
+    const float3 P2 = PositionSource[i2].xyz;
+    const float3 P3 = PositionSource[i3].xyz;
+    const float3 P4 = PositionSource[i4].xyz;
+    const float3 P5 = PositionSource[i5].xyz;
+    const float3 P6 = PositionSource[i6].xyz;
 
     // Centroids
-    float3 c123 = (p1 + p2 + p3) / 3;
-    float3 c456 = (p4 + p5 + p6) / 3;
-    float3 call = (c123 + c456) / 2;
+    const float3 C123 = (P1 + P2 + P3) / 3;
+    const float3 C456 = (P4 + P5 + P6) / 3;
+    const float3 Call = (C123 + C456) / 2;
 
-    // Noise field
-    float3 p_n = call * 1.8 + float3(0, Time / 2, Time / 4);
-    float param = saturate(snoise(p_n).w) * Amplitude;
+    // Determine the parameter based on the noise field.
+    const float3 Pn = Call * 1.8 + float3(0, Time / 2, Time / 4);
+    const float param = saturate(snoise(Pn).w) * Amplitude;
 
     // Position on the unit circle and its tangent
-    float3 p_cir = float3(normalize(call.xz), call.y).xzy;
-    float3 p_tan = -p_cir.zyx * float3(-1, 0, 1);
+    const float radius = rand1 * 0.6 + 0.1;
+    const float2 Vcir = normalize(Call.xz);
+    const float3 Pcir = float3(Vcir.x * radius, Call.y, Vcir.y * radius);
+    const float3 Vtan = float3(Vcir.y, 0, -Vcir.x);
 
-    // Random distribution
-    p_cir.xz *= Random(id) * 0.6 + 0.1;
-
-    // Quad size
-    float size = sin(Random(id + 100000) * PI * 2 + Time * 3) * 0.1 + 0.1;
+    // The size of the quad
+    const float size = sin(rand2 * PI * 2 + Time * 3) * 0.1 + 0.1;
 
     // Edge vectors
-    float3 edge_u = float3(0, size, 0);
-    float3 edge_v = p_tan * size;
+    const float3 Eh = Vtan * size;
+    const float3 Ev = float3(0, size, 0);
 
     // Modified vertex positions
-    float3 p1m = p_cir;
-    float3 p2m = p_cir + edge_u;
-    float3 p3m = p_cir + edge_v;
-    float3 p4m = p_cir + edge_u + edge_v;
-
-    // Interpolation
-    p1 = lerp(p1, p1m, param);
-    p2 = lerp(p2, p2m, param);
-    p3 = lerp(p3, p3m, param);
-    p4 = lerp(p4, p2m, param);
-    p5 = lerp(p5, p4m, param);
-    p6 = lerp(p6, p3m, param);
+    const float3 Pm1 = Pcir;
+    const float3 Pm2 = Pcir + Ev;
+    const float3 Pm3 = Pcir + Eh;
+    const float3 Pm4 = Pcir + Eh + Ev;
 
     // Output
-    PositionOut[i1] = float4(p1, 0);
-    PositionOut[i2] = float4(p2, 0);
-    PositionOut[i3] = float4(p3, 0);
-    PositionOut[i4] = float4(p4, 0);
-    PositionOut[i5] = float4(p5, 0);
-    PositionOut[i6] = float4(p6, 0);
+    PositionOutput[i1] = float4(lerp(PositionInput[i1].xyz, Pm1, param), 0);
+    PositionOutput[i2] = float4(lerp(PositionInput[i2].xyz, Pm2, param), 0);
+    PositionOutput[i3] = float4(lerp(PositionInput[i3].xyz, Pm3, param), 0);
+    PositionOutput[i4] = float4(lerp(PositionInput[i4].xyz, Pm2, param), 0);
+    PositionOutput[i5] = float4(lerp(PositionInput[i5].xyz, Pm4, param), 0);
+    PositionOutput[i6] = float4(lerp(PositionInput[i6].xyz, Pm3, param), 0);
 }
