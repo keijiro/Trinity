@@ -9,6 +9,7 @@ RWBuffer<float4> PositionOutput;
 
 CBUFFER_START(Params)
     uint TriangleCount;
+    float RandomSeed;
     float Time;
     float Amplitude;
 CBUFFER_END
@@ -19,8 +20,9 @@ void Main(uint id : SV_DispatchThreadID)
     if (id * 2 >= TriangleCount) return;
 
     // Generate random numbers in advance.
-    const float rand1 = Random(id);
-    const float rand2 = Random(id + 100000);
+    const uint seed = (uint)(RandomSeed * 0xffffff);
+    const float rand1 = Random(seed + id);
+    const float rand2 = Random(seed + id + 100000);
 
     // The vertex indices of the first triangle
     const uint i1 = id * 2;
@@ -46,7 +48,7 @@ void Main(uint id : SV_DispatchThreadID)
     const float3 Call = (C123 + C456) / 2;
 
     // Determine the parameter based on the noise field.
-    const float3 Pn = Call * 1.8 + float3(0, Time / 2, Time / 4);
+    const float3 Pn = Call * 1.8 + float3(RandomSeed * 100, Time / 2, Time / 4);
     const float param = saturate(snoise(Pn).w) * Amplitude;
 
     // Position on the unit circle and its tangent

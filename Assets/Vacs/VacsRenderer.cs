@@ -16,6 +16,12 @@ namespace Vacs
         [SerializeField, Range(0, 1)] float _jitter;
         [SerializeField, Range(0, 1)] float _digitize;
 
+        public float dissolve { set { _dissolve = value; } }
+        public float inflate  { set { _inflate  = value; } }
+        public float voxelize { set { _voxelize = value; } }
+        public float jitter   { set { _jitter   = value; } }
+        public float digitize { set { _digitize = value; } }
+
         #endregion
 
         #region Hidden attributes
@@ -42,6 +48,7 @@ namespace Vacs
         ComputeBuffer _tangentBuffer;
 
         MaterialPropertyBlock _drawProps;
+        float _randomSeed;
 
         #endregion
 
@@ -51,7 +58,7 @@ namespace Vacs
             get { return Application.isPlaying ? Time.time : 10; }
         }
 
-        void SetupVertices()
+        void SetupBuffers()
         {
             if (_positionSource  == null) _positionSource  = _data.CreatePositionBuffer();
             if (_positionBuffer1 == null) _positionBuffer1 = _data.CreatePositionBuffer();
@@ -64,7 +71,7 @@ namespace Vacs
             if (_tangentBuffer == null) _tangentBuffer = _data.CreateTangentBuffer();
         }
 
-        void ReleaseVertices()
+        void ReleaseBuffers()
         {
             if (_positionSource  != null) _positionSource .Release();
             if (_positionBuffer1 != null) _positionBuffer1.Release();
@@ -95,6 +102,7 @@ namespace Vacs
 
             compute.SetInt("TriangleCount", _data.triangleCount);
             compute.SetFloat("Amplitude", amplitude);
+            compute.SetFloat("RandomSeed", _randomSeed);
             compute.SetFloat("Time", globalTime);
 
             var c = compute.GetKernelThreadGroupSizeX(kernel) * trianglePerThread;
@@ -169,19 +177,24 @@ namespace Vacs
             // In edit mode, we release the compute buffers OnDisable not
             // OnDestroy, because Unity spits out warnings before OnDestroy.
             // (OnDestroy is too late to prevent warning.)
-            if (!Application.isPlaying) ReleaseVertices();
+            if (!Application.isPlaying) ReleaseBuffers();
         }
 
         void OnDestroy()
         {
-            ReleaseVertices();
+            ReleaseBuffers();
+        }
+
+        void Start()
+        {
+            _randomSeed = Random.value;
         }
 
         void LateUpdate()
         {
             if (_data != null)
             {
-                SetupVertices();
+                SetupBuffers();
                 UpdateVertices();
                 UpdateMeshFilter();
                 UpdateMeshRenderer();

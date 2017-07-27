@@ -10,6 +10,7 @@ RWBuffer<float4> PositionOutput;
 CBUFFER_START(Params)
     uint TriangleCount;
     float Time;
+    float RandomSeed;
     float Amplitude;
 CBUFFER_END
 
@@ -27,7 +28,7 @@ void Main(uint id : SV_DispatchThreadID)
     const float3 P3 = PositionSource[i3].xyz;
 
     // Low amplitude noise
-    const float3 Voffs1 = float3(0, 0.5f, 0.3f) * Time;
+    const float3 Voffs1 = float3(RandomSeed * 100, 0.5f * Time, 0.3f * Time);
     const float freq1 = 20;
     const float amp1 = 0.01f;
     float3 N1 = snoise(P1 * freq1 + Voffs1).xyz * amp1;
@@ -35,7 +36,7 @@ void Main(uint id : SV_DispatchThreadID)
     float3 N3 = snoise(P3 * freq1 + Voffs1).xyz * amp1;
 
     // High amplitude noise
-    const float3 Voffs2 = float3(0, 1.2f, -0.4f) * Time;
+    const float3 Voffs2 = float3(RandomSeed * 100, 1.2f * Time, -0.4f * Time);
     const float freq2 = 43;
     N1 *= 1 + pow(abs(snoise(P1 * freq2 + Voffs2).w), 10) * 100;
     N2 *= 1 + pow(abs(snoise(P2 * freq2 + Voffs2).w), 10) * 100;

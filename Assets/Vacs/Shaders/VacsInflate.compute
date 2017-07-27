@@ -11,6 +11,7 @@ RWBuffer<float4> PositionOutput;
 CBUFFER_START(Params)
     uint TriangleCount;
     float Time;
+    float RandomSeed;
     float Amplitude;
 CBUFFER_END
 
@@ -31,12 +32,12 @@ void Main(uint id : SV_DispatchThreadID)
     const float3 N2 = NormalSource[i2].xyz;
     const float3 N3 = NormalSource[i3].xyz;
 
-    const float3 Voffs1 = float3(0, 0.8f, 1.4f) * Time;
-    const float freq1 = 1;
+    const float3 Voffs = float3(RandomSeed * 100, 0.8f * Time, 1.4f * Time);
+    const float freq = 1;
     const float amp = 0.5f * Amplitude;
-    float n1 = max(0, (snoise(P1 * freq1 + Voffs1).w + 0.5) * amp);
-    float n2 = max(0, (snoise(P2 * freq1 + Voffs1).w + 0.5) * amp);
-    float n3 = max(0, (snoise(P3 * freq1 + Voffs1).w + 0.5) * amp);
+    float n1 = max(0, (snoise(P1 * freq + Voffs).w + 0.5) * amp);
+    float n2 = max(0, (snoise(P2 * freq + Voffs).w + 0.5) * amp);
+    float n3 = max(0, (snoise(P3 * freq + Voffs).w + 0.5) * amp);
 
     PositionOutput[i1] = float4(PositionInput[i1].xyz + N1 * n1, 0);
     PositionOutput[i2] = float4(PositionInput[i2].xyz + N2 * n2, 0);
