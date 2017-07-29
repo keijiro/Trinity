@@ -100,7 +100,7 @@
         float y3 = smoothstep(Random(wave + 4) / 2, Random(wave + 5) / 2 + 0.5, param);
 
         float thresh = lerp(lerp(y1, y2, saturate(uv.y * 2)), y3, saturate(uv.y * 2 - 1));
-        return frac(time / 2) < 0.5 ? uv.x > thresh : uv.x < thresh;
+        return frac(time / 2) < 0.5 ? uv.x < thresh : uv.x > thresh;
     }
 
     fixed4 frag(v2f_img i) : SV_Target

@@ -6,7 +6,7 @@ namespace Trinity
     [RequireComponent(typeof(Camera))]
     public class PostFx : MonoBehaviour
     {
-        #region Exposed attributes
+        #region Exposed attributes and public methods
 
         [Space]
         [SerializeField, Range(0, 1)] float _scanlineNoise;
@@ -41,6 +41,8 @@ namespace Trinity
 
         public Texture overlayTexture { set { _overlayTexture = value; } }
         public Color overlayColor { set { _overlayColor = value; } }
+
+        public void KickWiper() { _wipeCount++; }
 
         #endregion
 
