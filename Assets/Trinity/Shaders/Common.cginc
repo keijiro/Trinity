@@ -36,15 +36,13 @@ float GradNoise(float2 p)
     return lerp(lerp(d00, d01, fp.y), lerp(d10, d11, fp.y), fp.x);
 }
 
-/*
-float Random(float x, float y)
+float UVRandom(float x, float y)
 {
     return frac(sin(dot(float2(x, y), float2(12.9898, 78.233))) * 43758.5453);
 }
-*/
 
 // Hash function from H. Schechter & R. Bridson, goo.gl/RXiKaH
-float Hash(uint s)
+uint Hash(uint s)
 {
     s ^= 2747636419u;
     s *= 2654435769u;

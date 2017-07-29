@@ -31,9 +31,12 @@
     float _BlockDisplace;
     float _OverlayShuffle;
     float _OverlaySlits;
+    float _OverlaySlitDensity;
+    float _OverlaySlitRows;
     float _OverlayWiper1;
     float _OverlayWiper2;
     float _OverlayWiper3;
+    uint _OverlayWiperRandom;
     float _Progress;
 
     // Select color for posterization
@@ -83,9 +86,10 @@
     // Moving slits animation
     fixed Slits(float2 uv)
     {
-        float x = uv.x;
-        float gn = snoise(float2(x * 20, _Progress * 1.6)) +
-                   snoise(float2(x * 30, _Progress * 1.1)) / 2;
+        float x = (uv.x - 0.5) * _OverlaySlitDensity;
+        float offs = floor((uv.y - 0.5) * _OverlaySlitRows + 0.5) * 100;
+        float gn = snoise(float2(x * 2 + offs, _Progress * 1.6)) +
+                   snoise(float2(x * 3 + offs, _Progress * 1.1)) / 2;
         return abs(gn) < _OverlaySlits;
     }
 
@@ -98,6 +102,10 @@
         float y1 = smoothstep(Random(wave + 0) / 2, Random(wave + 1) / 2 + 0.5, param);
         float y2 = smoothstep(Random(wave + 2) / 2, Random(wave + 3) / 2 + 0.5, param);
         float y3 = smoothstep(Random(wave + 4) / 2, Random(wave + 5) / 2 + 0.5, param);
+
+        uint h = Hash(wave + 6) * _OverlayWiperRandom;
+        if (h & 1) uv = 1 - uv;
+        if (h & 2) uv = uv.yx;
 
         float thresh = lerp(lerp(y1, y2, saturate(uv.y * 2)), y3, saturate(uv.y * 2 - 1));
         return frac(time / 2) < 0.5 ? uv.x < thresh : uv.x > thresh;
@@ -145,10 +153,10 @@
         fixed3 c_out = lerp(fill, _LineColor.rgb, edge * _LineColor.a);
 
         // Overlay animations
-        c_ovr = Invert(c_ovr, Slits(i.uv));
-        c_ovr = Invert(c_ovr, Wiper(i.uv, _OverlayWiper1, 0));
-        c_ovr = Invert(c_ovr, Wiper(i.uv, _OverlayWiper2, 1));
-        c_ovr = Invert(c_ovr, Wiper(i.uv, _OverlayWiper3, 2));
+        c_ovr = Invert(c_ovr, Slits(uv));
+        c_ovr = Invert(c_ovr, Wiper(uv, _OverlayWiper1, 0));
+        c_ovr = Invert(c_ovr, Wiper(uv, _OverlayWiper2, 1));
+        c_ovr = Invert(c_ovr, Wiper(uv, _OverlayWiper3, 2));
 
         // Color invertion with overlay
         fixed3 c_inv = saturate(_OverlayColor.rgb - c_out + c_out.ggr);

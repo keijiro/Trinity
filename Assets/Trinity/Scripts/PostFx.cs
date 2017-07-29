@@ -14,8 +14,11 @@ namespace Trinity
         [Space]
         [SerializeField, Range(0, 1)] float _overlayShuffle;
         [SerializeField, Range(0, 1)] float _overlaySlits;
+        [SerializeField, Range(1, 50)] float _overlaySlitDensity = 10;
+        [SerializeField, Range(1, 50)] float _overlaySlitRows = 1;
         [Space]
         [SerializeField] float _wiperSpeed = 1;
+        [SerializeField] bool _wiperRandomness;
         [Space]
         [SerializeField] Color _lineColor = Color.black;
         [SerializeField, ColorUsage(false)] Color _fillColor1 = Color.blue;
@@ -33,6 +36,11 @@ namespace Trinity
 
         public float overlayShuffle { set { _overlayShuffle = value; } }
         public float overlaySlits { set { _overlaySlits = value; } }
+        public float overlaySlitDensity { set { _overlaySlitDensity = value; } }
+        public float overlaySlitRows { set { _overlaySlitRows = value; } }
+
+        public float wiperSpeed { set { _wiperSpeed = value; } }
+        public bool wiperRandomness { set { _wiperRandomness = value; } }
 
         public Color lineColor { set { _lineColor = value; } }
         public Color fillColor1 { set { _fillColor1 = value; } }
@@ -75,6 +83,7 @@ namespace Trinity
         {
             if (Application.isPlaying)
             {
+                if (Input.GetKeyDown(KeyCode.X)) _wipeCount++;
                 // Wiper animation
                 var dt = Time.deltaTime * _wiperSpeed;
                 for (var i = 0; i < 3; i++)
@@ -110,9 +119,12 @@ namespace Trinity
             _material.SetFloat("_BlockDisplace", _blockDisplace);
             _material.SetFloat("_OverlayShuffle", _overlayShuffle);
             _material.SetFloat("_OverlaySlits", _overlaySlits);
+            _material.SetFloat("_OverlaySlitDensity", _overlaySlitDensity);
+            _material.SetFloat("_OverlaySlitRows", _overlaySlitRows);
             _material.SetFloat("_OverlayWiper1", _wipers[0]);
             _material.SetFloat("_OverlayWiper2", _wipers[1]);
             _material.SetFloat("_OverlayWiper3", _wipers[2]);
+            _material.SetInt("_OverlayWiperRandom", _wiperRandomness ? 1 : 0);
 
             Graphics.Blit(source, destination, _material, 0);
         }

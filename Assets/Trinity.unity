@@ -240,14 +240,16 @@ MonoBehaviour:
   _blockDisplace: 0
   _overlayShuffle: 0
   _overlaySlits: 0
-  _wiperSpeed: 2
+  _overlaySlitDensity: 10
+  _overlaySlitRows: 1
+  _wiperSpeed: 1.5
   _lineColor: {r: 0.7794118, g: 0, b: 0, a: 1}
   _fillColor1: {r: 0, g: 0, b: 0.41176474, a: 1}
   _fillColor2: {r: 0.9411765, g: 0, b: 0, a: 1}
   _fillColor3: {r: 1, g: 1, b: 1, a: 1}
   _colorThreshold: 0.1
   _depthThreshold: 0.03
-  _overlayTexture: {fileID: 2800000, guid: b88d9928bd4a4b14b80ecf97c71cdaef, type: 3}
+  _overlayTexture: {fileID: 0}
   _overlayColor: {r: 0.8088235, g: 0, b: 0, a: 1}
   _shader: {fileID: 4800000, guid: 9dc73b50a583f2248a17713486be6e22, type: 3}
 --- !u!1 &152330094
