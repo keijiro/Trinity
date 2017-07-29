@@ -31,7 +31,9 @@
     float _BlockDisplace;
     float _OverlayShuffle;
     float _OverlaySlits;
-    float _OverlayWiper;
+    float _OverlayWiper1;
+    float _OverlayWiper2;
+    float _OverlayWiper3;
     float _Progress;
 
     // Select color for posterization
@@ -88,19 +90,17 @@
     }
 
     // Wiping animation
-    fixed Wiper(float2 uv, float offs)
+    fixed Wiper(float2 uv, float time, uint seed)
     {
-        float t = _Progress + offs;
-
-        uint wave = floor(t) * 100 + offs * 10000;
-        float param = frac(t);
+        uint wave = floor(time) * 100 + seed * 10000;
+        float param = frac(time);
 
         float y1 = smoothstep(Random(wave + 0) / 2, Random(wave + 1) / 2 + 0.5, param);
         float y2 = smoothstep(Random(wave + 2) / 2, Random(wave + 3) / 2 + 0.5, param);
         float y3 = smoothstep(Random(wave + 4) / 2, Random(wave + 5) / 2 + 0.5, param);
 
         float thresh = lerp(lerp(y1, y2, saturate(uv.y * 2)), y3, saturate(uv.y * 2 - 1));
-        return frac(t / 2) < 0.5 ? uv.x > thresh : uv.x < thresh;
+        return frac(time / 2) < 0.5 ? uv.x > thresh : uv.x < thresh;
     }
 
     fixed4 frag(v2f_img i) : SV_Target
@@ -146,9 +146,9 @@
 
         // Overlay animations
         c_ovr = Invert(c_ovr, Slits(i.uv));
-        c_ovr = Invert(c_ovr, Wiper(i.uv, 0) * _OverlayWiper);
-        c_ovr = Invert(c_ovr, Wiper(i.uv, 1.0 / 3) * _OverlayWiper);
-        c_ovr = Invert(c_ovr, Wiper(i.uv, 2.0 / 3) * _OverlayWiper);
+        c_ovr = Invert(c_ovr, Wiper(i.uv, _OverlayWiper1, 0));
+        c_ovr = Invert(c_ovr, Wiper(i.uv, _OverlayWiper2, 1));
+        c_ovr = Invert(c_ovr, Wiper(i.uv, _OverlayWiper3, 2));
 
         // Color invertion with overlay
         fixed3 c_inv = saturate(_OverlayColor.rgb - c_out + c_out.ggr);

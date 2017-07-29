@@ -14,7 +14,8 @@ namespace Trinity
         [Space]
         [SerializeField, Range(0, 1)] float _overlayShuffle;
         [SerializeField, Range(0, 1)] float _overlaySlits;
-        [SerializeField, Range(0, 1)] float _overlayWiper;
+        [Space]
+        [SerializeField] float _wiperSpeed = 1;
         [Space]
         [SerializeField] Color _lineColor = Color.black;
         [SerializeField, ColorUsage(false)] Color _fillColor1 = Color.blue;
@@ -32,7 +33,6 @@ namespace Trinity
 
         public float overlayShuffle { set { _overlayShuffle = value; } }
         public float overlaySlits { set { _overlaySlits = value; } }
-        public float overlayWiper { set { _overlayWiper = value; } }
 
         public Color lineColor { set { _lineColor = value; } }
         public Color fillColor1 { set { _fillColor1 = value; } }
@@ -49,9 +49,17 @@ namespace Trinity
         [SerializeField, HideInInspector] Shader _shader;
         Material _material;
 
+        float[] _wipers;
+        int _wipeCount;
+
         #endregion
 
         #region MonoBehaviour methods
+
+        void Start()
+        {
+            _wipers = new float[3];
+        }
 
         void OnDestroy()
         {
@@ -59,6 +67,20 @@ namespace Trinity
                 Destroy(_material);
             else
                 DestroyImmediate(_material);
+        }
+
+        void Update()
+        {
+            if (Application.isPlaying)
+            {
+                // Wiper animation
+                var dt = Time.deltaTime * _wiperSpeed;
+                for (var i = 0; i < 3; i++)
+                {
+                    var moveTo = (_wipeCount + i) / 3;
+                    _wipers[i] = Mathf.Clamp(_wipers[i] + dt, moveTo - 1, moveTo);
+                }
+            }
         }
 
         void OnRenderImage(RenderTexture source, RenderTexture destination)
@@ -86,7 +108,9 @@ namespace Trinity
             _material.SetFloat("_BlockDisplace", _blockDisplace);
             _material.SetFloat("_OverlayShuffle", _overlayShuffle);
             _material.SetFloat("_OverlaySlits", _overlaySlits);
-            _material.SetFloat("_OverlayWiper", _overlayWiper);
+            _material.SetFloat("_OverlayWiper1", _wipers[0]);
+            _material.SetFloat("_OverlayWiper2", _wipers[1]);
+            _material.SetFloat("_OverlayWiper3", _wipers[2]);
 
             Graphics.Blit(source, destination, _material, 0);
         }
