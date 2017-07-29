@@ -16,6 +16,11 @@
 
     UNITY_DECLARE_DEPTH_TEXTURE(_CameraDepthTexture);
 
+    float _Progress;
+
+    float _ScanlineNoise;
+    float _BlockDisplace;
+
     float4 _LineColor;
     float3 _FillColor1;
     float3 _FillColor2;
@@ -26,18 +31,16 @@
 
     sampler2D _OverlayTex;
     float4 _OverlayColor;
-
-    float _ScanlineNoise;
-    float _BlockDisplace;
     float _OverlayShuffle;
-    float _OverlaySlits;
-    float _OverlaySlitDensity;
-    float _OverlaySlitRows;
-    float _OverlayWiper1;
-    float _OverlayWiper2;
-    float _OverlayWiper3;
-    uint _OverlayWiperRandom;
-    float _Progress;
+
+    float _SlitWidth;
+    float _SlitDensity;
+    float _SlitRows;
+
+    float _Wiper1;
+    float _Wiper2;
+    float _Wiper3;
+    uint _WiperRandomDir;
 
     // Select color for posterization
     fixed3 SelectColor(float x, fixed3 c1, fixed3 c2, fixed3 c3)
@@ -86,11 +89,11 @@
     // Moving slits animation
     fixed Slits(float2 uv)
     {
-        float x = (uv.x - 0.5) * _OverlaySlitDensity;
-        float offs = floor((uv.y - 0.5) * _OverlaySlitRows + 0.5) * 100;
+        float x = (uv.x - 0.5) * _SlitDensity;
+        float offs = floor((uv.y - 0.5) * _SlitRows + 0.5) * 100;
         float gn = snoise(float2(x * 2 + offs, _Progress * 1.6)) +
                    snoise(float2(x * 3 + offs, _Progress * 1.1)) / 2;
-        return abs(gn) < _OverlaySlits;
+        return abs(gn) < _SlitWidth;
     }
 
     // Wiping animation
@@ -103,7 +106,7 @@
         float y2 = smoothstep(Random(wave + 2) / 2, Random(wave + 3) / 2 + 0.5, param);
         float y3 = smoothstep(Random(wave + 4) / 2, Random(wave + 5) / 2 + 0.5, param);
 
-        uint h = Hash(wave + 6) * _OverlayWiperRandom;
+        uint h = Hash(wave + 6) * _WiperRandomDir;
         if (h & 1) uv = 1 - uv;
         if (h & 2) uv = uv.yx;
 
@@ -154,9 +157,9 @@
 
         // Overlay animations
         c_ovr = Invert(c_ovr, Slits(uv));
-        c_ovr = Invert(c_ovr, Wiper(uv, _OverlayWiper1, 0));
-        c_ovr = Invert(c_ovr, Wiper(uv, _OverlayWiper2, 1));
-        c_ovr = Invert(c_ovr, Wiper(uv, _OverlayWiper3, 2));
+        c_ovr = Invert(c_ovr, Wiper(uv, _Wiper1, 0));
+        c_ovr = Invert(c_ovr, Wiper(uv, _Wiper2, 1));
+        c_ovr = Invert(c_ovr, Wiper(uv, _Wiper3, 2));
 
         // Color invertion with overlay
         fixed3 c_inv = saturate(_OverlayColor.rgb - c_out + c_out.ggr);
