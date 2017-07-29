@@ -9,6 +9,7 @@
     CGINCLUDE
 
     #include "Common.cginc"
+    #include "SimplexNoise2D.hlsl"
 
     sampler2D _MainTex;
     float4 _MainTex_TexelSize;
@@ -26,12 +27,23 @@
     sampler2D _OverlayTex;
     float4 _OverlayColor;
 
+    float _ScanlineNoise;
+    float _BlockDisplace;
+    float _OverlayShuffle;
+    float _OverlaySlits;
+    float _OverlayWiper;
     float _Progress;
 
     // Select color for posterization
     fixed3 SelectColor(float x, fixed3 c1, fixed3 c2, fixed3 c3)
     {
         return x < 1 ? c1 : (x < 2 ? c2 : c3);
+    }
+
+    // Invertion filter
+    fixed Invert(fixed input, fixed intensity)
+    {
+        return lerp(input, 1 - input, intensity);
     }
 
     // Dithering with the 3x3 Bayer matrix
@@ -70,41 +82,73 @@
     fixed Slits(float2 uv)
     {
         float x = uv.x;
-        float gn = GradNoise(float2(x * 20, _Progress * 1.6)) +
-                   GradNoise(float2(x * 40, _Progress * 1.1)) / 2;
-        return abs(gn) < 0.2;
+        float gn = snoise(float2(x * 20, _Progress * 1.6)) +
+                   snoise(float2(x * 30, _Progress * 1.1)) / 2;
+        return abs(gn) < _OverlaySlits;
     }
 
     // Wiping animation
     fixed Wiper(float2 uv, float offs)
     {
-        float wave = floor(_Progress + offs) + offs;
-        float param = frac(_Progress + offs);
+        float t = _Progress + offs;
 
-        float y1 = smoothstep(Random(wave, 0) / 2, Random(wave, 1) / 2 + 0.5, param);
-        float y2 = smoothstep(Random(wave, 2) / 2, Random(wave, 3) / 2 + 0.5, param);
-        float y3 = smoothstep(Random(wave, 4) / 2, Random(wave, 5) / 2 + 0.5, param);
+        uint wave = floor(t) * 100 + offs * 10000;
+        float param = frac(t);
+
+        float y1 = smoothstep(Random(wave + 0) / 2, Random(wave + 1) / 2 + 0.5, param);
+        float y2 = smoothstep(Random(wave + 2) / 2, Random(wave + 3) / 2 + 0.5, param);
+        float y3 = smoothstep(Random(wave + 4) / 2, Random(wave + 5) / 2 + 0.5, param);
 
         float thresh = lerp(lerp(y1, y2, saturate(uv.y * 2)), y3, saturate(uv.y * 2 - 1));
-        return frac(wave / 2) < 0.49999 ? uv.x > thresh : uv.x < thresh;
+        return frac(t / 2) < 0.5 ? uv.x > thresh : uv.x < thresh;
     }
 
     fixed4 frag(v2f_img i) : SV_Target
     {
-        fixed3 c_src = tex2D(_MainTex, i.uv).rgb; // source color
-        fixed c_ovr = tex2D(_OverlayTex, i.uv).a; // overlay mask
+        float2 uv = i.uv;
+
+        // Scanline noise
+        {
+            float y = uv.y * 93.4731 - _Progress * 388.332;
+            uv.x += GradNoise(y) * _ScanlineNoise * 0.1;
+        }
+
+        // Block diaplace
+        {
+            float2 p = floor(uv * float2(80, 20)) * float2(1.92132, 2.13724);
+            p += float2(_Progress * 4, 0);
+            float2 n = snoise_grad(p).xy * 0.05;
+            uv += n * n * (n < 0 ? -1 : 1) * _BlockDisplace;
+        }
+
+        // Wrapping around
+        uv = frac(uv);
+
+        // Shuffle the overlay texture
+        float2 uv_ovr = uv;
+        {
+            float speed = Random(floor(uv.x * 9) + 1000);
+            speed = (speed > 0.5 ? 1 : -1) * (abs(speed - 0.5) + 0.1) * 0.5;
+            uv_ovr.x = frac(frac(uv.x * 9) / 9 + speed * _Progress);
+            uv_ovr.x = lerp(uv.x, uv_ovr.x, _OverlayShuffle);
+        }
+
+        // Sample textures
+        fixed3 c_src = tex2D(_MainTex, uv).rgb; // source color
+        fixed c_ovr = tex2D(_OverlayTex, uv_ovr).a; // overlay mask
 
         // Edge detection and posterization
-        fixed edge = DetectEdge(i.uv);
+        fixed edge = DetectEdge(uv);
         fixed luma = LinearRgbToLuminance(c_src);
         fixed sel = luma * 3 + Dither3x3(i.uv);
         fixed3 fill = SelectColor(sel, _FillColor1, _FillColor2, _FillColor3);
         fixed3 c_out = lerp(fill, _LineColor.rgb, edge * _LineColor.a);
 
         // Overlay animations
-        c_ovr = saturate(lerp(c_ovr, 1 - c_ovr, Slits(i.uv)));
-        c_ovr = saturate(lerp(c_ovr, 1 - c_ovr, Wiper(i.uv, 0)));
-        c_ovr = saturate(lerp(c_ovr, 1 - c_ovr, Wiper(i.uv, 0.5)));
+        c_ovr = Invert(c_ovr, Slits(i.uv));
+        c_ovr = Invert(c_ovr, Wiper(i.uv, 0) * _OverlayWiper);
+        c_ovr = Invert(c_ovr, Wiper(i.uv, 1.0 / 3) * _OverlayWiper);
+        c_ovr = Invert(c_ovr, Wiper(i.uv, 2.0 / 3) * _OverlayWiper);
 
         // Color invertion with overlay
         fixed3 c_inv = saturate(_OverlayColor.rgb - c_out + c_out.ggr);

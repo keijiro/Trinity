@@ -9,6 +9,13 @@ namespace Trinity
         #region Exposed attributes
 
         [Space]
+        [SerializeField, Range(0, 1)] float _scanlineNoise;
+        [SerializeField, Range(0, 1)] float _blockDisplace;
+        [Space]
+        [SerializeField, Range(0, 1)] float _overlayShuffle;
+        [SerializeField, Range(0, 1)] float _overlaySlits;
+        [SerializeField, Range(0, 1)] float _overlayWiper;
+        [Space]
         [SerializeField] Color _lineColor = Color.black;
         [SerializeField, ColorUsage(false)] Color _fillColor1 = Color.blue;
         [SerializeField, ColorUsage(false)] Color _fillColor2 = Color.red;
@@ -19,6 +26,13 @@ namespace Trinity
         [Space]
         [SerializeField] Texture _overlayTexture;
         [SerializeField] Color _overlayColor = Color.red;
+
+        public float scanlineNoise { set { _scanlineNoise = value; } }
+        public float blockDisplace { set { _blockDisplace = value; } }
+
+        public float overlayShuffle { set { _overlayShuffle = value; } }
+        public float overlaySlits { set { _overlaySlits = value; } }
+        public float overlayWiper { set { _overlayWiper = value; } }
 
         public Color lineColor { set { _lineColor = value; } }
         public Color fillColor1 { set { _fillColor1 = value; } }
@@ -66,8 +80,13 @@ namespace Trinity
             _material.SetTexture("_OverlayTex", _overlayTexture);
             _material.SetColor("_OverlayColor", _overlayColor);
 
-            var time = Application.isPlaying ? Time.time : 10;
+            var time = Application.isPlaying ? Time.time : 10.1f;
             _material.SetFloat("_Progress", time);
+            _material.SetFloat("_ScanlineNoise", _scanlineNoise);
+            _material.SetFloat("_BlockDisplace", _blockDisplace);
+            _material.SetFloat("_OverlayShuffle", _overlayShuffle);
+            _material.SetFloat("_OverlaySlits", _overlaySlits);
+            _material.SetFloat("_OverlayWiper", _overlayWiper);
 
             Graphics.Blit(source, destination, _material, 0);
         }
