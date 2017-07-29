@@ -9,8 +9,10 @@ namespace Trinity
         #region Exposed attributes and public methods
 
         [Space]
-        [SerializeField, Range(0, 1)] float _scanlineNoise;
+        [SerializeField, Range(0, 50)] float _sliceCount = 20;
+        [SerializeField, Range(0, 1)] float _sliceDisplace;
         [SerializeField, Range(0, 1)] float _blockDisplace;
+        [SerializeField, Range(0, 1)] float _scanlineNoise;
         [Space]
         [SerializeField] Color _lineColor = Color.black;
         [SerializeField, ColorUsage(false)] Color _fillColor1 = Color.blue;
@@ -31,8 +33,11 @@ namespace Trinity
         [SerializeField, Range(0, 2)] float _wiperSpeed = 1;
         [SerializeField] bool _wiperAlign = true;
 
-        public float scanlineNoise { set { _scanlineNoise = value; } }
+        public float sliceCount { set { _sliceCount = value; } }
+        public float sliceDisplace { set { _sliceDisplace = value; } }
+        public void rehashSlice() { _sliceSeed++; }
         public float blockDisplace { set { _blockDisplace = value; } }
+        public float scanlineNoise { set { _scanlineNoise = value; } }
 
         public Color lineColor { set { _lineColor = value; } }
         public Color fillColor1 { set { _fillColor1 = value; } }
@@ -58,6 +63,7 @@ namespace Trinity
         [SerializeField, HideInInspector] Shader _shader;
         Material _material;
 
+        int _sliceSeed;
         float[] _wipers;
         int _wipeCount;
 
@@ -82,7 +88,6 @@ namespace Trinity
         {
             if (Application.isPlaying)
             {
-                if (Input.GetKeyDown(KeyCode.X)) _wipeCount++;
                 // Wiper animation
                 var dt = Time.deltaTime * _wiperSpeed;
                 for (var i = 0; i < 3; i++)
@@ -104,8 +109,11 @@ namespace Trinity
             var time = Application.isPlaying ? Time.time : 10.1f;
             _material.SetFloat("_Progress", time);
 
-            _material.SetFloat("_ScanlineNoise", _scanlineNoise);
+            _material.SetInt("_SliceSeed", _sliceSeed);
+            _material.SetFloat("_SliceCount", _sliceCount);
+            _material.SetFloat("_SliceDisplace", _sliceDisplace);
             _material.SetFloat("_BlockDisplace", _blockDisplace);
+            _material.SetFloat("_ScanlineNoise", _scanlineNoise);
 
             _material.SetColor("_LineColor", _lineColor);
             _material.SetColor("_FillColor1", _fillColor1);

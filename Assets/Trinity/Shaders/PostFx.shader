@@ -18,8 +18,11 @@
 
     float _Progress;
 
-    float _ScanlineNoise;
+    uint _SliceSeed;
+    float _SliceCount;
+    float _SliceDisplace;
     float _BlockDisplace;
+    float _ScanlineNoise;
 
     float4 _LineColor;
     float3 _FillColor1;
@@ -118,10 +121,14 @@
     {
         float2 uv = i.uv;
 
-        // Scanline noise
+        // Slice displace
         {
-            float y = uv.y * 93.4731 - _Progress * 388.332;
-            uv.x += GradNoise(y) * _ScanlineNoise * 0.1;
+            float aspect = _MainTex_TexelSize.y * _MainTex_TexelSize.z;
+            float sn, cs;
+            sincos(Random(_SliceSeed + 123) * UNITY_PI * 2, sn, cs);
+            float param = dot(uv, float2(cs * aspect, sn));
+            float disp = Random(floor(param * _SliceCount) + 321 + _SliceSeed) - 0.5;
+            uv += float2(-sn, cs * aspect) * disp * 0.5 * _SliceDisplace;
         }
 
         // Block diaplace
@@ -130,6 +137,12 @@
             p += float2(_Progress * 4, 0);
             float2 n = snoise_grad(p).xy * 0.05;
             uv += n * n * (n < 0 ? -1 : 1) * _BlockDisplace;
+        }
+
+        // Scanline noise
+        {
+            float y = uv.y * 93.4731 - _Progress * 388.332;
+            uv.x += GradNoise(y) * _ScanlineNoise * 0.1;
         }
 
         // Wrapping around

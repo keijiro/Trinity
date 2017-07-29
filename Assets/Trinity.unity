@@ -236,8 +236,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 766f23ac29f6c9e4ebe727787ce559ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _scanlineNoise: 0
+  _sliceCount: 20
+  _sliceDisplace: 0
   _blockDisplace: 0
+  _scanlineNoise: 0
   _lineColor: {r: 0.7794118, g: 0, b: 0, a: 1}
   _fillColor1: {r: 0, g: 0, b: 0.41176474, a: 1}
   _fillColor2: {r: 0.9411765, g: 0, b: 0, a: 1}
@@ -246,7 +248,7 @@ MonoBehaviour:
   _depthThreshold: 0.03
   _overlayTexture: {fileID: 2800000, guid: b88d9928bd4a4b14b80ecf97c71cdaef, type: 3}
   _overlayColor: {r: 0.8088235, g: 0, b: 0, a: 1}
-  _overlayShuffle: 1
+  _overlayShuffle: 0
   _slitWidth: 0
   _slitDensity: 10
   _slitRows: 1
