@@ -25,6 +25,7 @@ namespace Trinity
         [SerializeField] Texture _overlayTexture;
         [SerializeField] Color _overlayColor = Color.red;
         [SerializeField, Range(0, 1)] float _overlayShuffle;
+        [SerializeField, Range(0, 1)] float _overlayShake;
         [Space]
         [SerializeField, Range(0, 1)] float _slitWidth;
         [SerializeField, Range(1, 50)] float _slitDensity = 10;
@@ -47,6 +48,7 @@ namespace Trinity
         public Texture overlayTexture { set { _overlayTexture = value; } }
         public Color overlayColor { set { _overlayColor = value; } }
         public float overlayShuffle { set { _overlayShuffle = value; } }
+        public float overlayShake { set { _overlayShake = value; } }
 
         public float slitWidth { set { _slitWidth = value; } }
         public float slitDensity { set { _slitDensity = value; } }
@@ -126,6 +128,7 @@ namespace Trinity
             _material.SetTexture("_OverlayTex", _overlayTexture);
             _material.SetColor("_OverlayColor", _overlayColor);
             _material.SetFloat("_OverlayShuffle", _overlayShuffle);
+            _material.SetFloat("_OverlayShake", _overlayShake);
 
             _material.SetFloat("_SlitWidth", _slitWidth);
             _material.SetFloat("_SlitDensity", _slitDensity);

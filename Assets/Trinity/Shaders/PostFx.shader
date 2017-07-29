@@ -35,6 +35,7 @@
     sampler2D _OverlayTex;
     float4 _OverlayColor;
     float _OverlayShuffle;
+    float _OverlayShake;
 
     float _SlitWidth;
     float _SlitDensity;
@@ -155,6 +156,12 @@
             speed = (speed > 0.5 ? 1 : -1) * (abs(speed - 0.5) + 0.1) * 0.5;
             uv_ovr.x = frac(frac(uv.x * 9) / 9 + speed * _Progress);
             uv_ovr.x = lerp(uv.x, uv_ovr.x, _OverlayShuffle);
+        }
+
+        // Shake the overlay texture
+        {
+            float2 p = float2(uv.x * 10 + _Progress * 20, uv.y * 20);
+            uv_ovr.xy += snoise_grad(p) * 0.002 * _OverlayShake;
         }
 
         // Sample textures
