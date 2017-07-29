@@ -236,13 +236,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 766f23ac29f6c9e4ebe727787ce559ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _lineColor: {r: 0.5955882, g: 0, b: 0, a: 1}
-  _fillColor1: {r: 0, g: 0, b: 0.41176468, a: 1}
-  _fillColor2: {r: 1, g: 0, b: 0, a: 1}
+  _lineColor: {r: 0.7794118, g: 0, b: 0, a: 1}
+  _fillColor1: {r: 0, g: 0, b: 0.41176474, a: 1}
+  _fillColor2: {r: 0.9411765, g: 0, b: 0, a: 1}
   _fillColor3: {r: 1, g: 1, b: 1, a: 1}
-  _colorThreshold: 0.0981
-  _depthThreshold: 0.0276
-  _ditherStrength: 1
+  _colorThreshold: 0.1
+  _depthThreshold: 0.03
+  _overlayTexture: {fileID: 2800000, guid: b88d9928bd4a4b14b80ecf97c71cdaef, type: 3}
+  _overlayColor: {r: 0.8088235, g: 0, b: 0, a: 1}
   _shader: {fileID: 4800000, guid: 9dc73b50a583f2248a17713486be6e22, type: 3}
 --- !u!1 &152330094
 GameObject:
@@ -369,7 +370,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &334895413
 Transform:
   m_ObjectHideFlags: 0
@@ -671,7 +672,7 @@ Transform:
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!33 &605626566
 MeshFilter:
@@ -692,11 +693,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _data: {fileID: 11400000, guid: 59e6825501361124fb40aa0eed98eda7, type: 2}
-  _dissolve: 0.446
-  _inflate: 0.191
-  _voxelize: 0.457
-  _jitter: 0.463
-  _digitize: 0.434
+  _dissolve: 0.842
+  _inflate: 0.14
+  _voxelize: 0.445
+  _jitter: 0.667
+  _digitize: 1
   _computeDissolve: {fileID: 7200000, guid: bc3c62471aa645d41b4284dd31e9987f, type: 3}
   _computeInflate: {fileID: 7200000, guid: af2a2f7bd85892343ae3e309e8e900bb, type: 3}
   _computeVoxelize: {fileID: 7200000, guid: e9b049e1839f0f54d9e541dd72c6a9af, type: 3}
@@ -1153,7 +1154,7 @@ GameObject:
   - component: {fileID: 1167289852}
   - component: {fileID: 1167289851}
   m_Layer: 0
-  m_Name: Dollemonx (2)
+  m_Name: Dollemonx Right
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1171,11 +1172,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _data: {fileID: 11400000, guid: 59e6825501361124fb40aa0eed98eda7, type: 2}
-  _dissolve: 0.446
-  _inflate: 0.191
-  _voxelize: 0.457
-  _jitter: 0.463
-  _digitize: 0.434
+  _dissolve: 0.842
+  _inflate: 0.14
+  _voxelize: 0.445
+  _jitter: 0.667
+  _digitize: 1
   _computeDissolve: {fileID: 7200000, guid: bc3c62471aa645d41b4284dd31e9987f, type: 3}
   _computeInflate: {fileID: 7200000, guid: af2a2f7bd85892343ae3e309e8e900bb, type: 3}
   _computeVoxelize: {fileID: 7200000, guid: e9b049e1839f0f54d9e541dd72c6a9af, type: 3}
@@ -1228,7 +1229,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1167289850}
   m_LocalRotation: {x: -0, y: 1, z: -0, w: 0}
-  m_LocalPosition: {x: -0.71, y: -0.4, z: 0}
+  m_LocalPosition: {x: -1, y: -0.4, z: 0}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children: []
   m_Father: {fileID: 0}
@@ -1382,7 +1383,7 @@ GameObject:
   - component: {fileID: 1972849779}
   - component: {fileID: 1972849778}
   m_Layer: 0
-  m_Name: Dollemonx (1)
+  m_Name: Dollemonx Left
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1400,11 +1401,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _data: {fileID: 11400000, guid: 59e6825501361124fb40aa0eed98eda7, type: 2}
-  _dissolve: 0.446
-  _inflate: 0.191
-  _voxelize: 0.457
-  _jitter: 0.463
-  _digitize: 0.434
+  _dissolve: 0.842
+  _inflate: 0.14
+  _voxelize: 0.445
+  _jitter: 0.667
+  _digitize: 1
   _computeDissolve: {fileID: 7200000, guid: bc3c62471aa645d41b4284dd31e9987f, type: 3}
   _computeInflate: {fileID: 7200000, guid: af2a2f7bd85892343ae3e309e8e900bb, type: 3}
   _computeVoxelize: {fileID: 7200000, guid: e9b049e1839f0f54d9e541dd72c6a9af, type: 3}
@@ -1457,11 +1458,11 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1972849777}
   m_LocalRotation: {x: -0, y: 1, z: -0, w: 0}
-  m_LocalPosition: {x: 0.72, y: -0.4, z: 0}
+  m_LocalPosition: {x: 1, y: -0.4, z: 0}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!1 &2057066583
 GameObject:
