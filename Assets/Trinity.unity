@@ -578,14 +578,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28ac5389ce9bad34f977b01c52ba1d77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _triangleCount: 100
-  _triangleExtent: 0.1
-  _shuffleSpeed: 4
-  _noiseAmplitude: 1
-  _noiseFrequency: 1
-  _noiseMotion: {x: 0, y: 1, z: 0}
-  _material: {fileID: 2100000, guid: 4304e38a8f61b374999062df950788e7, type: 2}
+  _triangleCount: 8141
+  _triangleExtent: 0.08
+  _shuffleSpeed: 2.5
+  _noiseAmplitude: 0.2
+  _noiseFrequency: 4
+  _noiseMotion: {x: 0, y: 0, z: 1.4}
   _compute: {fileID: 7200000, guid: c46e9a9e0802be04c9441ea4e5c75e51, type: 3}
+  _shader: {fileID: 4800000, guid: dd34056461ef98446a6f7fec54e04bd7, type: 3}
 --- !u!4 &446697976
 Transform:
   m_ObjectHideFlags: 0
@@ -594,7 +594,7 @@ Transform:
   m_GameObject: {fileID: 446697974}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 12

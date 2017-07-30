@@ -1,4 +1,4 @@
-﻿Shader "Trinity/Core"
+﻿Shader "Hidden/Trinity/Core"
 {
     Properties
     {

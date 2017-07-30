@@ -1,7 +1,7 @@
 ﻿#pragma kernel Update
 
-#include "UnityCG.cginc"
-#include "SimplexNoise3D.cginc"
+#include "Common.cginc"
+#include "SimplexNoise3D.hlsl"
 
 RWStructuredBuffer<float4> PositionBuffer;
 RWStructuredBuffer<float4> NormalBuffer;
@@ -14,27 +14,21 @@ CBUFFER_START(Params)
     float3 NoiseOffset;
 CBUFFER_END
 
-float Random(float u, float v)
+float3 RandomPoint(uint id)
 {
-    float f = dot(float2(12.9898, 78.233), float2(u, v));
-    return frac(43758.5453 * sin(f));
-}
-
-float3 RandomPoint(float id)
-{
-    float u = Random(id * 0.01334, 0.3728) * UNITY_PI * 2;
-    float z = Random(0.8372, id * 0.01197) * 2 - 1;
+    float u = Random(id * 2 + 0) * UNITY_PI * 2;
+    float z = Random(id * 2 + 1) * 2 - 1;
     return float3(float2(cos(u), sin(u)) * sqrt(1 - z * z), z);
 }
 
 [numthreads(64, 1, 1)]
 void Update(uint id : SV_DispatchThreadID)
 {
-    int idx1 = id * 3;
-    int idx2 = id * 3 + 1;
-    int idx3 = id * 3 + 2;
+    uint idx1 = id * 3;
+    uint idx2 = id * 3 + 1;
+    uint idx3 = id * 3 + 2;
 
-    float seed = floor(Time + id * 0.1) * 0.1;
+    uint seed = floor(Time + id * 0.1) * 10000;
     float3 v1 = RandomPoint(idx1 + seed);
     float3 v2 = RandomPoint(idx2 + seed);
     float3 v3 = RandomPoint(idx3 + seed);
@@ -42,9 +36,9 @@ void Update(uint id : SV_DispatchThreadID)
     v2 = normalize(v1 + normalize(v2 - v1) * Extent);
     v3 = normalize(v1 + normalize(v3 - v1) * Extent);
 
-    float l1 = snoise(v1 * NoiseFrequency + NoiseOffset).w;
-    float l2 = snoise(v2 * NoiseFrequency + NoiseOffset).w;
-    float l3 = snoise(v3 * NoiseFrequency + NoiseOffset).w;
+    float l1 = snoise(v1 * NoiseFrequency + NoiseOffset);
+    float l2 = snoise(v2 * NoiseFrequency + NoiseOffset);
+    float l3 = snoise(v3 * NoiseFrequency + NoiseOffset);
 
     l1 = abs(l1 * l1 * l1);
     l2 = abs(l2 * l2 * l2);
