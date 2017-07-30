@@ -35,6 +35,7 @@ namespace Trinity
                     Destroy(_blitMaterial);
                 else
                     DestroyImmediate(_blitMaterial);
+                _blitMaterial = null;
             }
 
             if (_commandBuffer != null)
@@ -50,10 +51,11 @@ namespace Trinity
             {
                 _blitMaterial = new Material(_blitShader);
                 _blitMaterial.hideFlags = HideFlags.DontSave;
-                _blitMaterial.SetTexture("_MainTex", _sourceTexture);
-                _blitMaterial.SetFloat("_Displace", (_screenIndex - 1) / 3.0f);
-                _blitMaterial.SetFloat("_VFlip", _flip ? 1 : 0);
             }
+
+            _blitMaterial.SetTexture("_MainTex", _sourceTexture);
+            _blitMaterial.SetFloat("_Displace", (_screenIndex - 1) / 3.0f);
+            _blitMaterial.SetFloat("_VFlip", _flip ? 1 : 0);
 
             if (_commandBuffer == null)
             {

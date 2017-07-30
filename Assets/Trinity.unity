@@ -712,6 +712,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 406304277}
+  - component: {fileID: 406304278}
   m_Layer: 0
   m_Name: Display Rig
   m_TagString: Untagged
@@ -736,6 +737,17 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &406304278
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 406304276}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e751187917bbf9f4d84d11842f36b7f2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &415545903 stripped
 Transform:
   m_PrefabParentObject: {fileID: 400000, guid: d63359369673b9f47951c74db4982ed3, type: 3}
