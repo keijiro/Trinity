@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 114468deb3b1ba448b3b5216582ad472
+timeCreated: 1501414393
+licenseType: Pro
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - _sourceTexture: {instanceID: 0}
+  - _blitShader: {fileID: 4800000, guid: 89465f7572871834ab71bae5319f42bf, type: 3}
+  - _quadMesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
