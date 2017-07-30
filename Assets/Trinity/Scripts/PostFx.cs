@@ -38,7 +38,7 @@ namespace Trinity
 
         public float sliceCount { set { _sliceCount = value; } }
         public float sliceDisplace { set { _sliceDisplace = value; } }
-        public void rehashSlice() { _sliceSeed++; }
+        public void RehashSlice() { _sliceSeed++; }
         public float blockDisplace { set { _blockDisplace = value; } }
         public float scanlineNoise { set { _scanlineNoise = value; } }
 
