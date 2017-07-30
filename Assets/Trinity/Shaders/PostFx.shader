@@ -46,6 +46,8 @@
     float _Wiper3;
     uint _WiperRandomDir;
 
+    float _Invert;
+
     // Select color for posterization
     fixed3 SelectColor(float x, fixed3 c1, fixed3 c2, fixed3 c3)
     {
@@ -184,6 +186,9 @@
         // Color invertion with overlay
         fixed3 c_inv = saturate(_OverlayColor.rgb - c_out + c_out.ggr);
         c_out = lerp(c_out, c_inv, c_ovr * _OverlayColor.a);
+
+        // Total invertion filter
+        c_out = lerp(c_out, 1 - c_out, _Invert);
 
         return fixed4(GammaToLinearSpace(c_out), 1);
     }

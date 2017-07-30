@@ -33,6 +33,8 @@ namespace Trinity
         [Space]
         [SerializeField, Range(0, 2)] float _wiperSpeed = 1;
         [SerializeField] bool _wiperAlign = true;
+        [Space]
+        [SerializeField, Range(0, 1)] float _invert = 0;
 
         public float sliceCount { set { _sliceCount = value; } }
         public float sliceDisplace { set { _sliceDisplace = value; } }
@@ -57,6 +59,8 @@ namespace Trinity
         public float wiperSpeed { set { _wiperSpeed = value; } }
         public bool wiperAlign { set { _wiperAlign = value; } }
         public void KickWiper() { _wipeCount++; }
+
+        public float invert { set { _invert = value; } }
 
         #endregion
 
@@ -138,6 +142,8 @@ namespace Trinity
             _material.SetFloat("_Wiper2", _wipers[1]);
             _material.SetFloat("_Wiper3", _wipers[2]);
             _material.SetInt("_WiperRandomDir", _wiperAlign ? 0 : 1);
+
+            _material.SetFloat("_Invert", _invert);
 
             Graphics.Blit(source, destination, _material, 0);
         }
