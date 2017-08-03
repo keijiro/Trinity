@@ -955,7 +955,7 @@ GameObject:
   - component: {fileID: 49550499}
   - component: {fileID: 49550500}
   m_Layer: 0
-  m_Name: Trim (1)
+  m_Name: Trim
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -985,7 +985,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a319229719231eb42a0f578b8f339e1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _wiringNodePosition: {x: 1104, y: -60}
+  _wiringNodePosition: {x: 1104, y: -84}
   _target: {fileID: 1007745237}
   _propertyName: trim
 --- !u!1 &50141076
@@ -6940,6 +6940,49 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _wiringNodePosition: {x: 372, y: 228}
+--- !u!1 &428501327
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 428501328}
+  - component: {fileID: 428501329}
+  m_Layer: 0
+  m_Name: Radius
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &428501328
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 428501327}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1007692681}
+  m_RootOrder: 42
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &428501329
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 428501327}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a319229719231eb42a0f578b8f339e1c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _wiringNodePosition: {x: 1488, y: -180}
+  _target: {fileID: 1358356429}
+  _propertyName: radius
 --- !u!1 &429884650
 GameObject:
   m_ObjectHideFlags: 0
@@ -6969,6 +7012,7 @@ Transform:
   - {fileID: 1366018074}
   - {fileID: 944177487}
   - {fileID: 691420011}
+  - {fileID: 1358356428}
   m_Father: {fileID: 1369941398}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
@@ -7472,7 +7516,7 @@ GameObject:
   - component: {fileID: 461351810}
   - component: {fileID: 461351811}
   m_Layer: 0
-  m_Name: Radius (1)
+  m_Name: Radius
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7502,7 +7546,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a319229719231eb42a0f578b8f339e1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _wiringNodePosition: {x: 1488, y: -180}
+  _wiringNodePosition: {x: 1488, y: -228}
   _target: {fileID: 1007745237}
   _propertyName: radius
 --- !u!1 &461639733
@@ -7545,7 +7589,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a319229719231eb42a0f578b8f339e1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _wiringNodePosition: {x: 1488, y: -228}
+  _wiringNodePosition: {x: 1488, y: -276}
   _target: {fileID: 509051663}
   _propertyName: radius
 --- !u!1 &462838875
@@ -7822,7 +7866,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e02d4ac2ec87d643a32c5b25174f509, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _wiringNodePosition: {x: 1104, y: 0}
+  _wiringNodePosition: {x: 1104, y: 24}
   _threshold: 0.005
   _delayToOff: 0
   _onEvent:
@@ -7861,6 +7905,17 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 822011748}
+        m_MethodName: Enable
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: Klak.Wiring.NodeBase+VoidEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   _offEvent:
@@ -7889,6 +7944,17 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 2042942957}
+        m_MethodName: Disable
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 822011748}
         m_MethodName: Disable
         m_Mode: 1
         m_Arguments:
@@ -11532,7 +11598,7 @@ GameObject:
   - component: {fileID: 654844709}
   - component: {fileID: 654844710}
   m_Layer: 0
-  m_Name: Float Filter (1)
+  m_Name: Float Filter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11562,7 +11628,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f12cb6e816d52340928f63f1b02f1b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _wiringNodePosition: {x: 1284, y: -240}
+  _wiringNodePosition: {x: 1284, y: -264}
   _responseCurve:
     serializedVersion: 2
     m_Curve:
@@ -11612,6 +11678,17 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 461639735}
+        m_MethodName: set_input
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 428501329}
         m_MethodName: set_input
         m_Mode: 0
         m_Arguments:
@@ -13034,6 +13111,49 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: Klak.Wiring.NodeBase+FloatEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!1 &714727951
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 714727952}
+  - component: {fileID: 714727953}
+  m_Layer: 0
+  m_Name: Trim
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &714727952
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 714727951}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1007692681}
+  m_RootOrder: 43
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &714727953
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 714727951}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a319229719231eb42a0f578b8f339e1c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _wiringNodePosition: {x: 1104, y: -36}
+  _target: {fileID: 1358356429}
+  _propertyName: trim
 --- !u!1 &716745342
 GameObject:
   m_ObjectHideFlags: 0
@@ -13074,7 +13194,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a319229719231eb42a0f578b8f339e1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _wiringNodePosition: {x: 1104, y: -156}
+  _wiringNodePosition: {x: 1104, y: -180}
   _target: {fileID: 1111748409}
   _propertyName: trim
 --- !u!1 &717987971
@@ -14968,6 +15088,49 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: Klak.Wiring.NodeBase+FloatEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!1 &822011746
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 822011747}
+  - component: {fileID: 822011748}
+  m_Layer: 0
+  m_Name: Active Status Out
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &822011747
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 822011746}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1007692681}
+  m_RootOrder: 44
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &822011748
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 822011746}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64dd8887208f8424e9be10f9fffd0adf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _wiringNodePosition: {x: 1320, y: 156}
+  _targetComponent: {fileID: 1358356429}
+  _targetGameObject: {fileID: 0}
 --- !u!1 &823879949
 GameObject:
   m_ObjectHideFlags: 0
@@ -18620,6 +18783,9 @@ Transform:
   - {fileID: 2071140986}
   - {fileID: 1916171579}
   - {fileID: 1822695730}
+  - {fileID: 428501328}
+  - {fileID: 714727952}
+  - {fileID: 822011747}
   m_Father: {fileID: 733996596}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -22353,6 +22519,17 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 714727953}
+        m_MethodName: set_input
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: Klak.Wiring.NodeBase+FloatEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!1 &1217732893
@@ -24894,6 +25071,60 @@ MonoBehaviour:
   _wiringNodePosition: {x: 960, y: 360}
   _target: {fileID: 1167289851}
   _propertyName: inflate
+--- !u!1 &1358356427
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1358356428}
+  - component: {fileID: 1358356429}
+  m_Layer: 0
+  m_Name: Swarm
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1358356428
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1358356427}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.46, y: 0.46, z: 0.46}
+  m_Children: []
+  m_Father: {fileID: 429884651}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1358356429
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1358356427}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b96d22c8c7818ec49969122b320a267a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _instanceCount: 6000
+  _template: {fileID: 11400000, guid: ab73e0ddff7bf12408b8ba18c1602d5c, type: 2}
+  _radius: 0.004
+  _trim: 1
+  _speed: 0.93
+  _volume: {fileID: 11400000, guid: a8a2cb6545942d945bb052938e1d538e, type: 2}
+  _initialSpread: 0.4
+  _noiseFrequency: 5
+  _noiseSpread: 0.5
+  _noiseMotion: 0.1
+  _material: {fileID: 2100000, guid: c0edf0b5b639e064aa15cd8103e899f1, type: 2}
+  _gradient: {fileID: 11400000, guid: 507d4899f2f45484986f78b50d3fd9a7, type: 2}
+  _randomSeed: 222
+  _compute: {fileID: 7200000, guid: e579db230e141ad4baa8636ac84ed1ef, type: 3}
 --- !u!1 &1363193322
 GameObject:
   m_ObjectHideFlags: 0
@@ -30430,7 +30661,7 @@ GameObject:
   - component: {fileID: 1677920775}
   - component: {fileID: 1677920774}
   m_Layer: 0
-  m_Name: Active Status Out (1)
+  m_Name: Active Status Out
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -30447,7 +30678,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64dd8887208f8424e9be10f9fffd0adf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _wiringNodePosition: {x: 1320, y: -48}
+  _wiringNodePosition: {x: 1320, y: -24}
   _targetComponent: {fileID: 1111748409}
   _targetGameObject: {fileID: 0}
 --- !u!4 &1677920775
@@ -33023,7 +33254,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b6980d93df82e24c9c18ac327c41a94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _wiringNodePosition: {x: 1104, y: -240}
+  _wiringNodePosition: {x: 1104, y: -264}
   _modulationType: 1
   _outputEvent:
     m_PersistentCalls:
@@ -34344,7 +34575,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2a647f6ec529dd4ca5250ab558ad64a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _wiringNodePosition: {x: 912, y: -312}
+  _wiringNodePosition: {x: 912, y: -336}
   _curve:
     serializedVersion: 2
     m_Curve:
@@ -35904,7 +36135,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a319229719231eb42a0f578b8f339e1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _wiringNodePosition: {x: 1488, y: -276}
+  _wiringNodePosition: {x: 1488, y: -324}
   _target: {fileID: 1111748409}
   _propertyName: radius
 --- !u!1 &2021905899
@@ -36536,7 +36767,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64dd8887208f8424e9be10f9fffd0adf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _wiringNodePosition: {x: 1320, y: 72}
+  _wiringNodePosition: {x: 1320, y: 96}
   _targetComponent: {fileID: 1007745237}
   _targetGameObject: {fileID: 0}
 --- !u!1 &2050520898
@@ -37077,7 +37308,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64dd8887208f8424e9be10f9fffd0adf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _wiringNodePosition: {x: 1320, y: 12}
+  _wiringNodePosition: {x: 1320, y: 36}
   _targetComponent: {fileID: 509051663}
   _targetGameObject: {fileID: 0}
 --- !u!4 &2062752238
@@ -37191,7 +37422,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a319229719231eb42a0f578b8f339e1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _wiringNodePosition: {x: 1104, y: -108}
+  _wiringNodePosition: {x: 1104, y: -132}
   _target: {fileID: 509051663}
   _propertyName: trim
 --- !u!1 &2074214594
