@@ -121,7 +121,7 @@ namespace Vacs
             var kernel = compute.FindKernel("Main");
 
             compute.SetBuffer(kernel, "PositionSource", _positionSource);
-            compute.SetBuffer(kernel, "PositionModified", _positionBuffer2);
+            compute.SetBuffer(kernel, "PositionModified", _positionBuffer1);
 
             compute.SetBuffer(kernel, "NormalInput", _normalSource);
             compute.SetBuffer(kernel, "NormalOutput", _normalBuffer);

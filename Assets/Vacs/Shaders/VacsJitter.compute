@@ -38,9 +38,9 @@ void Main(uint id : SV_DispatchThreadID)
     // High amplitude noise
     const float3 Voffs2 = float3(RandomSeed * 100, 1.2f * Time, -0.4f * Time);
     const float freq2 = 43;
-    N1 *= 1 + pow(abs(snoise(P1 * freq2 + Voffs2).w), 10) * 100;
-    N2 *= 1 + pow(abs(snoise(P2 * freq2 + Voffs2).w), 10) * 100;
-    N3 *= 1 + pow(abs(snoise(P3 * freq2 + Voffs2).w), 10) * 100;
+    N1 *= 1 + pow(abs(snoise(P1 * freq2 + Voffs2).w), 10) * 150;
+    N2 *= 1 + pow(abs(snoise(P2 * freq2 + Voffs2).w), 10) * 150;
+    N3 *= 1 + pow(abs(snoise(P3 * freq2 + Voffs2).w), 10) * 150;
 
     PositionOutput[i1] = float4(PositionInput[i1].xyz + N1 * Amplitude, 0);
     PositionOutput[i2] = float4(PositionInput[i2].xyz + N2 * Amplitude, 0);

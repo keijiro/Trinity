@@ -48,17 +48,19 @@ void Main(uint id : SV_DispatchThreadID)
     const float3 Call = (C123 + C456) / 2;
 
     // Determine the parameter based on the noise field.
-    const float3 Pn = Call * 1.8 + float3(RandomSeed * 100, Time / 2, Time / 4);
-    const float param = saturate(snoise(Pn).w) * Amplitude;
+    const float3 Pn = Call * float3(1.2, 0.6, 1.2);
+    const float3 On = float3(RandomSeed * 100, Time / 2, Time / 4);
+    const float ns = saturate(snoise(Pn + On).w * Amplitude * 2);
+    const float param = floor(ns * 4 + 0.5) / 4;
 
     // Position on the unit circle and its tangent
-    const float radius = rand1 * 0.6 + 0.1;
+    const float radius = rand1 * 0.01 + 0.4;
     const float2 Vcir = normalize(Call.xz);
     const float3 Pcir = float3(Vcir.x * radius, Call.y, Vcir.y * radius);
     const float3 Vtan = float3(Vcir.y, 0, -Vcir.x);
 
     // The size of the quad
-    const float size = sin(rand2 * PI * 2 + Time * 3) * 0.1 + 0.1;
+    const float size = sin(rand2 * PI * 2 + Time * 3) * 0.03 + 0.03;
 
     // Edge vectors
     const float3 Eh = Vtan * size;
