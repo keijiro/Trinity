@@ -24,13 +24,17 @@ Note
 
 - The default recording device in the system configuration is used for audio
   analysis.
-- The following addresses are used for OSC messaging (port=9000).
+- The following addresses are used for OSC messaging.
 
 | Address     | Trigger Type |
 | ----------- | ------------ |
 | `/trig/1-1` | Kick         |
 | `/trig/1-3` | Kick         |
 | `/trig/1-2` | Snare        |
+
+- The port number for OSC messaging is fixed to 9000.
+- You can also use Z (kick) and X (snare) keys for triggering. This is useful
+  when OSC is not an option or network connection is lost while performance.
 
 License
 -------
