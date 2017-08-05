@@ -7874,7 +7874,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 406304276}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e751187917bbf9f4d84d11842f36b7f2, type: 3}
   m_Name: 
@@ -13822,8 +13822,8 @@ MonoBehaviour:
   _filterType: 3
   _autoGain: 1
   _internalGain: 6
-  _dynamicRange: 10
-  _holdAndFallDown: 1
+  _dynamicRange: 8
+  _holdAndFallDown: 0
   _fallDownSpeed: 0.5
   _outputEvent:
     m_PersistentCalls:
@@ -43239,8 +43239,8 @@ MonoBehaviour:
   _filterType: 1
   _autoGain: 1
   _internalGain: 6
-  _dynamicRange: 10
-  _holdAndFallDown: 1
+  _dynamicRange: 6
+  _holdAndFallDown: 0
   _fallDownSpeed: 0.5
   _outputEvent:
     m_PersistentCalls:
