@@ -1,0 +1,10 @@
+The 3D models stored in this directory are scanned by ModBod and licensed by
+CODAME under a Creative Commons Attribution license.
+
+ModBod/CODAME - http://codame.com/projects/modbod
+CC Attribution - https://creativecommons.org/licenses/by/4.0/
+
+The models are decimated and converted for real-time use by Keijiro Takahashi.
+See the repository below for further details.
+
+https://github.com/keijiro/CodameScans

@@ -44,12 +44,12 @@ Note
 Acknowledgements
 ----------------
 
-[The dollemonx 3D model] was scanned by [MobBod] and licensed by [CODAME] under
+[The dollemonx 3D model] was scanned by [ModBod] and licensed by [CODAME] under
 a [Creative Commons Attribution] license. See the [CODAME Scans] repository for
 further details.
 
 [The dollemonx 3D model]: https://sketchfab.com/models/0c7ce1376ade4b23a986916befa83e31
-[MobBod]: http://codame.com/projects/modbod
+[ModBod]: http://codame.com/projects/modbod
 [CODAME]: http://codame.com/
 [Creative Commons Attribution]: https://creativecommons.org/licenses/by/4.0/
 [CODAME Scans]: https://github.com/keijiro/CodameScans
