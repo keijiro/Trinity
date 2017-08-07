@@ -7,8 +7,11 @@ Trinity
 ![gif](http://i.imgur.com/5Mx6gPX.gif)
 ![gif](http://i.imgur.com/eF20IDe.gif)
 
+More photos and videos are available on [Tumblr].
+
 [DUB-Russell]: http://dubrussell.com
 [Channel 17]: https://www.super-deluxe.com/room/4329/
+[Tumblr]: http://radiumsoftware.tumblr.com/tagged/channel17
 
 System Requirements
 -------------------
