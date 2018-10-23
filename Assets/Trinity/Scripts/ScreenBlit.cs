@@ -8,8 +8,10 @@ namespace Trinity
     public sealed class ScreenBlit : MonoBehaviour
     {
         [SerializeField] Texture _sourceTexture;
-        [SerializeField, Range(0, 3)] int _screenIndex;
-        [SerializeField] bool _flip;
+        [SerializeField] float _marginTop;
+        [SerializeField] float _marginRight;
+        [SerializeField] float _marginBottom;
+        [SerializeField] float _marginLeft;
 
         [SerializeField, HideInInspector] Shader _blitShader;
 
@@ -54,16 +56,16 @@ namespace Trinity
             }
 
             _blitMaterial.SetTexture("_MainTex", _sourceTexture);
-            _blitMaterial.SetFloat("_Displace", (_screenIndex - 1) / 3.0f);
-            _blitMaterial.SetFloat("_VFlip", _flip ? 1 : 0);
+            _blitMaterial.SetVector("_Margins", new Vector4(
+                _marginLeft, _marginBottom, _marginRight, _marginTop
+            ));
 
             if (_commandBuffer == null)
             {
-                var isMonitor = (_screenIndex == 0);
                 _commandBuffer = new CommandBuffer();
                 _commandBuffer.DrawProcedural(
-                    Matrix4x4.identity, _blitMaterial, isMonitor ? 1 : 0,
-                    MeshTopology.Triangles, isMonitor ? 6 : 3
+                    Matrix4x4.identity, _blitMaterial, 0,
+                    MeshTopology.Triangles, 3
                 );
             }
 
