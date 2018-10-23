@@ -506,9 +506,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _sourceTexture: {fileID: 8400000, guid: 81c1a018e3a43294a8c1fe2a100057a5, type: 2}
-  _marginTop: 583.5
+  _marginTop: 292
   _marginRight: 0
-  _marginBottom: 583.5
+  _marginBottom: 292
   _marginLeft: 0
   _blitShader: {fileID: 4800000, guid: 89465f7572871834ab71bae5319f42bf, type: 3}
 --- !u!1 &45105693
