@@ -6,7 +6,7 @@
 StructuredBuffer<float4> PositionSource;
 StructuredBuffer<float4> NormalSource;
 StructuredBuffer<float4> PositionInput;
-RWBuffer<float4> PositionOutput;
+RWStructuredBuffer<float4> PositionOutput;
 
 CBUFFER_START(Params)
     uint TriangleCount;

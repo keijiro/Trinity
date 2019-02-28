@@ -6,10 +6,10 @@ StructuredBuffer<float4> PositionSource;
 StructuredBuffer<float4> PositionModified;
 
 StructuredBuffer<float4> NormalInput;
-RWBuffer<float4> NormalOutput;
+RWStructuredBuffer<float4> NormalOutput;
 
 StructuredBuffer<float4> TangentInput;
-RWBuffer<float4> TangentOutput;
+RWStructuredBuffer<float4> TangentOutput;
 
 CBUFFER_START(Params)
     uint TriangleCount;
