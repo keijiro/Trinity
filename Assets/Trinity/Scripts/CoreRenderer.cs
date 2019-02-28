@@ -74,7 +74,7 @@ namespace Trinity
 
         #region Compute configurations
 
-        const int kThreadCount = 128;
+        const int kThreadCount = 64;
         int ThreadGroupCount { get { return _triangleCount / kThreadCount; } }
         int TriangleCount { get { return kThreadCount * ThreadGroupCount; } }
 
