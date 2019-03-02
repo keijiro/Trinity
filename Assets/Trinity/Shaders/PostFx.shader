@@ -37,6 +37,9 @@
     float _OverlayShuffle;
     float _OverlayShake;
 
+    sampler2D _StencilTex;
+    float4x4 _StencilMatrix;
+
     float _SlitWidth;
     float _SlitDensity;
     float _SlitRows;
@@ -182,6 +185,10 @@
         c_ovr = Invert(c_ovr, Wiper(uv, _Wiper1, 0));
         c_ovr = Invert(c_ovr, Wiper(uv, _Wiper2, 1));
         c_ovr = Invert(c_ovr, Wiper(uv, _Wiper3, 2));
+
+        // Color invertion with stencil
+        float2 uv_stencil = mul(_StencilMatrix, float4(uv, 0, 1)).xy;
+        c_ovr = Invert(c_ovr, tex2D(_StencilTex, uv_stencil).r);
 
         // Color invertion with overlay
         fixed3 c_inv = saturate(_OverlayColor.rgb - c_out + c_out.ggr);

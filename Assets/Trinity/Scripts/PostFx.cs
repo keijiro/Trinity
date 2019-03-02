@@ -27,6 +27,11 @@ namespace Trinity
         [SerializeField, Range(0, 1)] float _overlayShuffle;
         [SerializeField, Range(0, 1)] float _overlayShake;
         [Space]
+        [SerializeField] Texture _stencilTexture;
+        [SerializeField] Vector2 _stencilPosition = Vector2.zero;
+        [SerializeField] float _stencilAngle = 0;
+        [SerializeField] float _stencilScale = 1;
+        [Space]
         [SerializeField, Range(0, 1)] float _slitWidth;
         [SerializeField, Range(1, 50)] float _slitDensity = 10;
         [SerializeField, Range(1, 50)] float _slitRows = 1;
@@ -52,6 +57,11 @@ namespace Trinity
         public float overlayShuffle { set { _overlayShuffle = value; } }
         public float overlayShake { set { _overlayShake = value; } }
 
+        public Texture stencilTexture { set { _stencilTexture = value; } }
+        public Vector2 stencilPosition { set { _stencilPosition = value; } }
+        public float stencilAngle { set { _stencilAngle = value; } }
+        public float stencilScale { set { _stencilScale = value; } }
+
         public float slitWidth { set { _slitWidth = value; } }
         public float slitDensity { set { _slitDensity = value; } }
         public float slitRows { set { _slitRows = value; } }
@@ -64,7 +74,7 @@ namespace Trinity
 
         #endregion
 
-        #region Private variables
+        #region Private members
 
         [SerializeField, HideInInspector] Shader _shader;
         Material _material;
@@ -72,6 +82,20 @@ namespace Trinity
         int _sliceSeed;
         float[] _wipers;
         int _wipeCount;
+
+        Matrix4x4 GetStencilMatrix(RenderTexture source)
+        {
+            var aspect = (float)source.width / source.height;
+            var rot = Quaternion.AngleAxis(-_stencilAngle, Vector3.forward);
+            return
+                Matrix4x4.Translate(Vector3.one * 0.5f) *
+                Matrix4x4.Scale(new Vector3(0.5f, 1, 1)) *
+                Matrix4x4.Rotate(rot) *
+                Matrix4x4.Scale(Vector3.one / _stencilScale) *
+                Matrix4x4.Translate(-(Vector3)_stencilPosition) *
+                Matrix4x4.Scale(new Vector3(aspect, 1, 1)) *
+                Matrix4x4.Translate(Vector3.one * -0.5f);
+        }
 
         #endregion
 
@@ -133,6 +157,9 @@ namespace Trinity
             _material.SetColor("_OverlayColor", _overlayColor);
             _material.SetFloat("_OverlayShuffle", _overlayShuffle);
             _material.SetFloat("_OverlayShake", _overlayShake);
+
+            _material.SetTexture("_StencilTex", _stencilTexture);
+            _material.SetMatrix("_StencilMatrix", GetStencilMatrix(source));
 
             _material.SetFloat("_SlitWidth", _slitWidth);
             _material.SetFloat("_SlitDensity", _slitDensity);

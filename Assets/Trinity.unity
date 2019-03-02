@@ -1887,6 +1887,10 @@ MonoBehaviour:
   _overlayColor: {r: 0.8088235, g: 0, b: 0, a: 1}
   _overlayShuffle: 0
   _overlayShake: 0
+  _stencilTexture: {fileID: 2800000, guid: 5c8990a95b075ed4ab55f1bba4afb73b, type: 3}
+  _stencilPosition: {x: 0, y: 0}
+  _stencilAngle: 0
+  _stencilScale: 1
   _slitWidth: 0
   _slitDensity: 10
   _slitRows: 1
