@@ -506,9 +506,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _sourceTexture: {fileID: 8400000, guid: 81c1a018e3a43294a8c1fe2a100057a5, type: 2}
-  _marginTop: 0
+  _marginTop: 104
   _marginRight: 0
-  _marginBottom: 0
+  _marginBottom: 104
   _marginLeft: 0
   _blitShader: {fileID: 4800000, guid: 89465f7572871834ab71bae5319f42bf, type: 3}
 --- !u!1 &45105693
@@ -1806,7 +1806,7 @@ Camera:
     height: 1
   near clip plane: 0.1
   far clip plane: 50
-  field of view: 18
+  field of view: 30
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -22456,8 +22456,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -248}
-  m_SizeDelta: {x: 0, y: 496}
+  m_AnchoredPosition: {x: 0, y: -436}
+  m_SizeDelta: {x: 0, y: 872}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &970335096
 MonoBehaviour:
@@ -32331,7 +32331,7 @@ MonoBehaviour:
     _interpolationType: 0
     _interpolationSpeed: 10
   _amplitude: -12
-  _bias: 18
+  _bias: 30
   _outputEvent:
     m_PersistentCalls:
       m_Calls:
