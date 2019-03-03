@@ -30472,14 +30472,14 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 0
       value: 1
-      inSlope: -10.740644
-      outSlope: -10.740644
+      inSlope: -6.1021357
+      outSlope: -6.1021357
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
-      outWeight: 0.039748956
+      outWeight: 0.033472802
     - serializedVersion: 3
-      time: 0.3
+      time: 0.5
       value: 0
       inSlope: 0
       outSlope: 0
@@ -30490,7 +30490,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  _speed: 1
+  _speed: 1.6
   _playOnStart: 0
   _floatEvent:
     m_PersistentCalls:
