@@ -28,7 +28,7 @@ namespace Trinity
         [SerializeField, Range(0, 1)] float _overlayShake;
         [Space]
         [SerializeField] Texture _stencilTexture;
-        [SerializeField] Vector2 _stencilPosition = Vector2.zero;
+        [SerializeField] Vector3 _stencilPosition = Vector3.zero;
         [SerializeField] float _stencilAngle = 0;
         [SerializeField] float _stencilScale = 1;
         [Space]
@@ -58,7 +58,7 @@ namespace Trinity
         public float overlayShake { set { _overlayShake = value; } }
 
         public Texture stencilTexture { set { _stencilTexture = value; } }
-        public Vector2 stencilPosition { set { _stencilPosition = value; } }
+        public Vector3 stencilPosition { set { _stencilPosition = value; } }
         public float stencilAngle { set { _stencilAngle = value; } }
         public float stencilScale { set { _stencilScale = value; } }
 
@@ -92,7 +92,7 @@ namespace Trinity
                 Matrix4x4.Scale(new Vector3(0.5f, 1, 1)) *
                 Matrix4x4.Rotate(rot) *
                 Matrix4x4.Scale(Vector3.one / _stencilScale) *
-                Matrix4x4.Translate(-(Vector3)_stencilPosition) *
+                Matrix4x4.Translate(-_stencilPosition) *
                 Matrix4x4.Scale(new Vector3(aspect, 1, 1)) *
                 Matrix4x4.Translate(Vector3.one * -0.5f);
         }
