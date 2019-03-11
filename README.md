@@ -21,8 +21,8 @@ System Requirements
 - Four XGA (1024x768) displays
 
 Trinity is designed for triple-projector setups. It uses the first (leftmost)
-screen for control/monitoring, and the latter three screens for projection. So
-it needs four displays in total.
+screen for control/monitoring, and the latter three screens for projection.
+It needs four displays in total.
 
 Note
 ----
@@ -39,7 +39,7 @@ Note
 
 - The port number for OSC messaging is fixed to 9000.
 - You can also use Z (kick) and X (snare) keys for triggering. This is useful
-  when OSC is not an option or network connection is lost while performance.
+  when OSC is not an option or the network connection is lost during a performance.
 
 Acknowledgements
 ----------------
