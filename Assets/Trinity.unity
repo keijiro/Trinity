@@ -30996,8 +30996,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _wiringNodePosition: {x: 420, y: 312}
-  _minimum: -1
-  _maximum: 1
+  _minimum: -0.6
+  _maximum: 0.6
   _sendOnStartUp: 0
   _outputEvent:
     m_PersistentCalls:
@@ -38879,8 +38879,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _wiringNodePosition: {x: 420, y: 372}
-  _minimum: -0.4
-  _maximum: 0.4
+  _minimum: -0.2
+  _maximum: 0.2
   _sendOnStartUp: 0
   _outputEvent:
     m_PersistentCalls:
@@ -40217,8 +40217,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _wiringNodePosition: {x: 420, y: 732}
-  _minimum: 0.5
-  _maximum: 1.5
+  _minimum: 0.33
+  _maximum: 1.33
   _sendOnStartUp: 0
   _outputEvent:
     m_PersistentCalls:
