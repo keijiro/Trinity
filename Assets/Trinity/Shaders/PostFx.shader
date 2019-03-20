@@ -33,12 +33,10 @@
     float _DepthThreshold;
 
     sampler2D _OverlayTex;
+    float4x4 _OverlayMatrix;
     float4 _OverlayColor;
     float _OverlayShuffle;
     float _OverlayShake;
-
-    sampler2D _StencilTex;
-    float4x4 _StencilMatrix;
 
     float _SlitWidth;
     float _SlitDensity;
@@ -169,9 +167,12 @@
             uv_ovr.xy += snoise_grad(p) * 0.002 * _OverlayShake;
         }
 
+        // Apply the overlay transform
+        uv_ovr = mul(_OverlayMatrix, float4(uv_ovr, 0, 1)).xy;
+
         // Sample textures
         fixed3 c_src = tex2D(_MainTex, uv).rgb; // source color
-        fixed c_ovr = tex2D(_OverlayTex, uv_ovr).a; // overlay mask
+        fixed c_ovr = tex2D(_OverlayTex, uv_ovr).r; // overlay mask
 
         // Edge detection and posterization
         fixed edge = DetectEdge(uv);
@@ -185,10 +186,6 @@
         c_ovr = Invert(c_ovr, Wiper(uv, _Wiper1, 0));
         c_ovr = Invert(c_ovr, Wiper(uv, _Wiper2, 1));
         c_ovr = Invert(c_ovr, Wiper(uv, _Wiper3, 2));
-
-        // Color invertion with stencil
-        float2 uv_stencil = mul(_StencilMatrix, float4(uv, 0, 1)).xy;
-        c_ovr = Invert(c_ovr, tex2D(_StencilTex, uv_stencil).r);
 
         // Color invertion with overlay
         fixed3 c_inv = saturate(_OverlayColor.rgb - c_out + c_out.ggr);
